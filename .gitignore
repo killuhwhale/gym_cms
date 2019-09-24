@@ -4,3 +4,4 @@ gym_cms/settings.py
 /media
 /*.pkl
 gym_cms/env_settings_private.py
+*.pyc
