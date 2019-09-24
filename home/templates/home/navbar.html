@@ -1,0 +1,70 @@
+<nav class="navbar  navbar-expand-md navbar-light bg-light">
+
+<a class="navbar-brand" href="#">Loozurphat</a>
+<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+	<span class="navbar-toggler-icon"></span>
+</button>
+
+<div class="collapse navbar-collapse" id="navbarText">
+
+<ul class="navbar-nav nav-tabs mr-auto text-center">
+	<li class="nav-item">
+		<a class="nav-link" href="/">Home <span class="sr-only"></span></a>
+	</li>
+	<li class="nav-item">
+		<a class="nav-link" href="/scan_code/">Check-in</a>
+	</li>
+	<li class="nav-item">
+		<a class="nav-link" href="/create_user/">Register</a>
+	</li>
+</ul>
+<ul class="navbar-nav nav-tabs text-center justify-content-end">
+	 <li class="nav-item dropdown ">
+	    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Member Status</a>
+	    <div class="dropdown-menu text-center dropdown-menu-right">
+			<a class="nav-link" href="/user_status/">Memberships</a>
+			<a class="nav-link" href="/user_contracts/">Contracts</a>
+		</div>
+	<li>	
+
+	
+	<li class="nav-item">
+		<a class="nav-link" href="/gym_products/">Products</a>
+	</li>
+	 <li class="nav-item dropdown ">
+	    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Payments</a>
+	    <div class="dropdown-menu text-center dropdown-menu-right">
+			<a class="nav-link" href="/stripe_charges/">Membership Charges</a>
+			<a class="nav-link" href="/stripe_subscriptions/">Membership Subscriptions</a>
+			<a class="nav-link" href="/sold_gym_product/">Product Charges</a>
+			<a class="nav-link" href="/show_charge_refund/">Refunded Charges</a>
+			<a class="nav-link" 
+				href="/stripe_subscriptions_canceled/">
+				Canceled Subscriptions</a>
+		</div>
+	</li>
+	<li class="nav-item dropdown ">
+	    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Admin</a>
+	    <div class="dropdown-menu text-center dropdown-menu-right">
+			<a class="nav-link" href="/charge_refund/">Refund Charge</a>
+			<a class="nav-link" href="/admin_panel/">Admin Panel</a>
+		</div>
+	</li>
+</ul>
+</div>
+</nav>
+
+
+<script type="text/javascript">
+	let links = document.querySelector('#navbarText').querySelectorAll("a");
+	let currentPage = document.querySelector("title").innerText.trim().toLowerCase();
+	for(let i =0; i<links.length; i++){
+		let link = links[i].innerText.toLowerCase();
+		// console.log(`%c ${currentPage} ... ${link}`, "color:yellow;");
+		if( link == currentPage){
+			let prevAttr = links[i].getAttribute('class');
+			links[i].setAttribute("class", "active "+prevAttr);
+		}
+	}
+</script>
+

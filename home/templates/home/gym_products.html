@@ -1,0 +1,109 @@
+{% extends 'home/base.html'%}
+{% load staticfiles %}
+{% block title %}
+Products
+{% endblock %}
+
+<!-- Search for clients or populate with client from another page -->
+<!-- uses React Component user_panel_react::UserPanel -->
+
+{% block body %}
+
+<div class="row text-center">
+	<div class="col-10 offset-1">
+		<h1> Products </h1>
+		<div id='root'></div>
+	</div>
+</div>
+
+
+<script  src="{% static 'home/js/ajax_helper.js' %}"></script>
+<script type="text/babel">
+
+function Product(props){
+	
+	return(
+		<div className="col-6">
+			<h2> {props.name} </h2>
+			<img className='img-thumbnail' src={props.img}/>
+			<h3> {props.price} </h3>
+			<input type="number" id={props.id} name="product"
+			onChange={() => props.onChange(props.id)}/> 
+		</div>
+	);
+}
+
+
+
+// Manages each product
+// 		Renders product from properties
+// 		Stores product qty in state
+// 		When form submitted, post request sent w/ hidden input
+//			value => current state  of product quantity to server
+class ProductPanel extends React.Component{
+	constructor(props){
+		super(props);
+		this.state = {
+			product_qty: {}
+		}
+	}
+
+	changeQty(ev){
+		// ev : input id corresponds to product pk
+		// appended with product_
+		let input =document.getElementById(ev);
+
+		console.log(ev, input.value);
+		let current_qtys = this.state.product_qty;
+		current_qtys[ev] = input.value;
+		this.setState({
+			product_qty: current_qtys
+		})
+	}
+
+	submitForm(ev){
+		// mouse event
+		console.log("Submit: ");
+		console.log(this.state.product_qty);
+		
+		// send cart data to View, store in session
+		// Display cart and select user to pay
+	}
+
+	render(){
+		let products = this.props.products;
+		return(
+			<form method="POST" action="/product_payment/">
+			<div className='row'> {%csrf_token%}
+			{
+				products.map((el) => {
+					return( <Product key = {el.id}
+							id = {el.id}
+							name = {el.name}
+							price = {el.price}
+							img = {el.img}
+							onChange = {this.changeQty.bind(this)}/>
+					);
+				})
+			}	<input type="hidden" name="products" value={JSON.stringify(this.state.product_qty)} />
+				<input type="submit" />
+			</div>
+			</form>
+		);
+	}
+}
+
+
+
+// function replaceRoot
+let root = document.getElementById("root");
+ReactDOM.unmountComponentAtNode(root);
+getData("/api/gym_products/").then((data)=>{
+	ReactDOM.render(<ProductPanel products = {data}/>, root);
+});
+
+
+</script>
+
+{% endblock %}
+	

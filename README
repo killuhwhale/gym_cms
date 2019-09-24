@@ -1,0 +1,41 @@
+Gym CMS
+
+
+Payments:
+
+Customer Id from stripe
+	- created during first payment
+
+Charge
+	- create one off charge for specific amt w/ customer id
+
+Plan
+	- Pre defined on with stripe to make a plan. 
+	- Plans define the base price, currency, and billing cycle for 
+		subscriptions. 
+
+Subscriptions
+	- Ties a Customer and Plan together
+
+
+Checkout Process Membership
+
+	- Submit stripe form with:
+		- user id
+		- package id # package to purchase, may be subscription
+	- in def post(self, request):
+		- gather:
+			- user id
+			- package id
+		- look up:
+			- user
+			- package
+		- check for customer_id
+			- Create if None
+		- check package if subscription or not
+			- if subscription
+				- get plan id from package
+				- create subscription w/ customer id and plan id
+			- else
+				- create a charge with customer id
+		- render result of transaction 

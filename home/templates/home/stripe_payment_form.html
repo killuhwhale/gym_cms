@@ -1,0 +1,14 @@
+<form id="payment_form" action="{% url 'api:process_charge's %}" method="POST">	
+	{% csrf_token %}
+	<input type='hidden' name='userpk' value="{{userpk}}" />
+
+	<script
+		src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+		data-key="pk_test_eUhj83Ub3kGy5Sk1zLag5Cuq"
+		data-name="Demo Site"
+		data-amount = "1337"
+		data-description="Example charge"
+		data-image="https://stripe.com/img/documentation/checkout/marketplace.png"
+		data-locale="auto">
+	</script>
+</form>

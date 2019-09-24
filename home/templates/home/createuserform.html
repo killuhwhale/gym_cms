@@ -1,0 +1,36 @@
+{% extends 'home/base.html' %}
+{% load static %}
+{% block title %} Register
+{% endblock title%}
+{% block body%}
+	<!-- <link rel="stylesheet" type="text/css" href="/static/css/login.css"> -->
+	<div class="row text-center">
+		<div class="col-sm-12 col-md-6 offset-md-3 mg-sm">
+			<h1>Registration</h1>
+			
+			<form action="" method="post" enctype="multipart/form-data">{% csrf_token %}
+				{% include 'home/form_template.html' %}
+				<div>
+				<input id="id_password1" type="password" name="password_check" required/><br>
+				<input type="submit" value="Create" class="btn btn-primary large-text form-button"/>
+				</div>
+			</form>	
+		</div>
+	</div>
+
+	<script type="text/javascript">
+		function setPlaceHolders(){
+			console.log("page loaded");
+			let f1 = document.getElementById('id_username');
+			let f2 = document.getElementById('id_password');
+			let f3 = document.getElementById('id_password1');
+			f1.placeholder = 'Username';
+			f2.placeholder = 'Password';
+			f3.placeholder = 'Password';
+			f1.classList.add("form-control");
+			f2.classList.add("form-control");
+			f3.classList.add("form-control");
+		};
+		setPlaceHolders();
+	</script>
+{% endblock body %}

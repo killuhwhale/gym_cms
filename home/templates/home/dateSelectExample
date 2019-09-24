@@ -1,0 +1,34 @@
+componentDidMount(){
+	console.log("hello");
+	let d = $('input[id="_datepicker"]'); 
+	d.daterangepicker({
+		opens: 'left'
+	}, (start, end, label) => {
+		console.log("A new date selection was made: " + start + ' to ' + end.format('YYYY-MM-DD'));
+		this.updateData(start,end);
+
+	});
+}
+
+
+updateData(start, end){
+	console.log("updateData");
+	getData(`/api/stripe_charges/${this.props.user}/${start}/${end}/Membership/`)
+	.then((data) => {
+		console.log(data);
+		if(data != "False"){
+			console.log("Setting updated data");
+			this.setState({
+				charges: data
+			});
+		}else{
+			console.log("No charges found for member!");
+		}
+	});
+}
+
+
+<th> Date<br/>
+	<input id="_datepicker"  
+	 className="text-center" type="text"/>
+</th>

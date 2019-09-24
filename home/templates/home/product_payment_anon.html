@@ -1,0 +1,56 @@
+{% extends 'home/base.html'%}
+{% load staticfiles %}
+{% block title %}
+Product Payment Anon
+{% endblock %}
+
+{% block body %}
+
+
+<div class="row text-center">
+	<div class="col-10 offset-1">
+
+		{% if cart %}
+			<h1>Total: {{cart_total}}</h1>
+			{% for item in cart %}
+				<div class="col-12">		
+				{{ item.product_name }}
+				{{ item.product_price }}ea
+				x{{ item.qty }}
+				{{ item.subtotal }}
+				</div>
+			{% endfor %}
+			<form id="payment_form" action="{% url 'home:product_payment_anon' %}" method="POST">	
+				{% csrf_token %}
+				
+				<input type='hidden' name='cart_total_stripe' 
+					value="{{cart_total_stripe}}" />
+				{% for item in cart %}
+					<input type='hidden' name='p_id_{{item.pk}}' 
+					value="{{item.pk}}" />
+					<input type='hidden' name='p_info_{{item.pk}}' 
+					value="{{item.product_name}} {{item.prouct_price}} {{item.qty}} {{item.subtotal}}" />
+				{% endfor %}
+				
+				<script
+					src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+					data-key="pk_test_eUhj83Ub3kGy5Sk1zLag5Cuq"
+					data-name="Demo Site"
+					data-amount = {{ cart_total_stripe }}
+					data-description="Example charge"
+					data-image="https://stripe.com/img/documentation/checkout/marketplace.png"
+					data-locale="auto">
+				</script>
+			</form>
+		{% elif success %}
+			<h1>Payment Attempted </h1>
+			{{ email }}
+			{{ payment_type }}
+		{% endif %}
+
+
+	</div>
+</div>
+
+
+{% endblock %}

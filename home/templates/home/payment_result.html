@@ -1,0 +1,48 @@
+{% extends 'home/base.html'%}
+{% load staticfiles %}
+{% block title %}
+Payment Initiated
+{% endblock %}
+
+{% block body %}
+
+<div class="row text-center">
+		<div class="col-12">
+			{% if isSuccessful %}
+				<h1>Payment Successful</h1>
+			{% else %}
+				<h1>Payment Unsuccessful</h1>
+			{% endif %}
+			
+			{% if charge %}
+				{% if charge.outcome %}
+					<h3> {{charge.outcome.seller_message}} </h3>
+					<h4> {{charge.amount}} cents </h4>
+					{% if charge.outcome.reason %}
+						<h3>{{outcome.reason}}</h3>
+					{% endif %}
+				{% endif %}
+			{% endif %}
+
+
+			{% if subscription %}				
+				<h3> Status: {{subscription.status}} </h3>
+				<h4> Subscription Id: {{subscription.id}} </h4>
+				{% if subscription.plan %}
+					<h3>{{plan.nickname}}</h3>
+					<h3>{{plan.id}}</h3>
+				{% endif %}
+				
+			{% endif %}
+		</div>
+	</div>
+
+
+	<a href="/"> Home </a>
+
+
+<script>
+	
+</script>
+
+{% endblock %}

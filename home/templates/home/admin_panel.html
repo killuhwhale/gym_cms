@@ -1,0 +1,55 @@
+{% extends 'home/base.html'%}
+{% load staticfiles %}
+{% block title %}
+Admin Panel
+{% endblock %}
+
+{% block body %}
+<style type="text/css">
+table{
+	max-height: 360px;
+}
+</style>
+<div class="row text-center">
+	<div class="col-12">
+		<h1>Admin Panel</h1>
+	</div>
+	<div class="col-2">
+		<h2>Options</h2>
+		<button id="show_all_users">Show Users</button>
+		<button id="show_all_charges">Show Charges</button>
+		<button id="show_all_subs">Show Subs</button>
+		<button id="show_all_products">Show Products</button>
+	</div>
+	<div class="col-10">
+		<div id="main_root"></div>
+	</div>
+</div>
+
+<script  src="{% static 'home/js/ajax_helper.js' %}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.js"></script>
+<script type="text/babel" src="{% static 'home/js/react_admin_all_users.js' %}"></script>
+<script type="text/babel" src="{% static 'home/js/react_admin_all_charges.js' %}"></script>
+<script type="text/babel" src="{% static 'home/js/react_admin_all_subscriptions.js' %}"></script>
+<script type="text/babel" src="{% static 'home/js/react_admin_all_products.js' %}"></script>
+
+
+
+<script type="text/javascript">
+
+	document.querySelector("#show_all_users").addEventListener("click", (ev) => {
+		reactAdminGetUsers("main_root");
+	});
+	document.querySelector("#show_all_charges").addEventListener("click", (ev) => {
+		reactAdminGetCharges("main_root");
+	});
+	document.querySelector("#show_all_subs").addEventListener("click", (ev) => {
+		reactAdminGetSubs("main_root");
+	});
+	document.querySelector("#show_all_products").addEventListener("click", (ev) => {
+		reactAdminGetProducts("main_root");
+	});
+		
+</script>
+
+{% endblock %}

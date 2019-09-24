@@ -1,0 +1,53 @@
+Features:
+	Register User
+		- Create User in Db
+		- Create and encode qr_code to amke qr_img
+		- Sign User agrrement and save signature
+
+	Membership - Month-to-Month & Subscription
+		- Payment details needed only one time  
+		- Allow memberships to be paid for with single charge or recurring sub
+		- Different Membership packages
+		- Trials on memberships
+
+	Sale of Gym Products
+		- Allow sale of any gym product
+		- Single charge via user's qr_code
+			- FAST an QUICK payment via members qr_img
+
+	## To-Do
+	Admin Functions
+		- View charges by
+			- user search or scan
+			
+		- View subscriptions by
+			- user search or scan
+
+		- View purchased products by
+			- user search or scan
+
+		- Cancel Memberships via
+			-subscription view
+
+
+New Features
+
+- Promotions / discounts
+- guess passes
+- gift cards
+- personal 
+
+TO-DO
+	
+
+	View
+	- All canceled subscriptons
+
+	Setup
+	- API for taxing and adding fees
+
+	Celery 
+	- Tasks error and success handlers
+
+	- Admin views of 
+		- All Charges, subs, and sold gym product  with graphs

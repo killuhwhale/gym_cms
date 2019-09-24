@@ -1,0 +1,26 @@
+<style>
+    li{
+        list-style: none;
+        color: red;
+    }
+</style>
+<div class="errorlist" style="color:white; font-size: 18px; line-height: 25px;">
+    {% for error in form.non_field_errors %}
+        <div> {{error}}</div>
+    {% endfor %}
+
+    {% for field in form %}
+        <div>
+            {{field.errors}}                  
+        </div>
+    {% endfor %}
+</div>
+
+<!-- {{ field.label_tag }}  -->
+{% for field in form %}
+     
+    <div class="inputfield">
+        {{ field }} 
+    </div>
+
+{% endfor %}
