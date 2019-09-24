@@ -1,6 +1,6 @@
 gym_cms/settings.py
-static
-blog
-media
-*.pkl
+/static
+/blog
+/media
+/*.pkl
 gym_cms/env_settings_private.py
