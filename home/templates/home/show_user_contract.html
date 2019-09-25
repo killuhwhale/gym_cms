@@ -75,9 +75,9 @@ function displaySignature(userpk, contractpk){
 		let urlSplit = data[0].signature.split("/");
 		console.log(`urlSplit: ${urlSplit.toString()}`);
 		
-		getData(`/get_image/${urlSplit[1]}/${urlSplit[2]}/`)
+		getData(`/get_image/${urlSplit[2]}/${urlSplit[3]}/`)
 		.then((httpImg)=>{
-			console.log(data);
+			console.log(httpImg);
 			document.querySelector("#sigImg").src = httpImg;
 		});
 
