@@ -15,6 +15,7 @@ from .serializers import *
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from django.http import HttpResponse
 
 from gym_cms import settings
 
@@ -394,7 +395,7 @@ class GetImage(APIView):
             print("nginxpath", nginxpath)
             
             response = HttpResponse()
-            response["Content-Type"] = 'image/*'
+            response["Content-Type"] = 'image/*;application/pdf'
             response["Content-Disposition"] = "INLINE"
             response["X-Accel-Redirect"] = nginxpath
             response["Cache-Control"] = "no-cache, no-store, must-revalidate"
