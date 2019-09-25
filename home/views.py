@@ -397,6 +397,7 @@ class GetImage(APIView):
             response = HttpResponse()
             del response["Content-Type"]
             response["X-Accel-Redirect"] = nginxpath
+            
             response["Cache-Control"] = "no-cache, no-store, must-revalidate"
             response["Pragma"] = "no-cache"
             response["Expires"] = "0"

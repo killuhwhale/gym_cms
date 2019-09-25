@@ -44,17 +44,17 @@ let signContract = {{signContract}};
 
 console.log(userpk);
 
-// getData(`/api/contract/${contractpk}/`).then((data) =>{
-// 	console.log(`Data: ${data}`);
-// 	document.querySelector('#pdf_display').src = data.contract
-// });
-
-getData("/get_image/contracts/algos.pdf/").then((data) =>{
-
-	console.log(data);
-
-	// document.querySelector('#pdf_display').src = data;
+getData(`/api/contract/${contractpk}/`).then((data) =>{
+	console.log(`Data: ${data}`);
+	document.querySelector('#pdf_display').src = data.contract
 });
+
+// getData("/get_image/contracts/algos.pdf/").then((data) =>{
+
+// 	console.log(data);
+
+// 	document.querySelector('#pdf_display').src = data;
+// });
 
 
 var canvas = document.querySelector("canvas");
