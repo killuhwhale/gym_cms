@@ -30,7 +30,7 @@ STRIPE_API_KEY = env['STRIPE_API_KEY']
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ["localhost", "gymez.ml", "www.gymez.ml"]
+ALLOWED_HOSTS = ["localhost", "0.0.0.0", "gymez.ml", "www.gymez.ml"]
 
 AUTH_USER_MODEL = 'home.User'
 
