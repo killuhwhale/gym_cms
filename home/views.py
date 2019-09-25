@@ -401,7 +401,7 @@ class GetImage(APIView):
             response["Pragma"] = "no-cache"
             response["Expires"] = "0"
         
-            return response
+            return Response(str(response))
         return Response("no folder or filename given.")
 
 
