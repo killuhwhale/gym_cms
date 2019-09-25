@@ -233,6 +233,7 @@ class UserContractAPI(APIView):
             uc = UserContract.objects.filter(contract_id=docpk)
         else:
             return Response("No pk given")
+        
         usercontracts = list()
         for ucontract in uc:
             print(ucontract)
