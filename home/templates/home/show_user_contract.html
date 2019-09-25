@@ -17,7 +17,7 @@ Pay Membership
 		</div>
 	</div>
 	<div class="col-12" name="signatureImg">
-		<img id="sigImg"/>
+		<iframe src="" id="sigImg"></iframe>
 	</div>
 	<div class="col-12" name="signaturepad">
 		<canvas style="border-bottom: 3px solid black;"></canvas>
@@ -43,19 +43,9 @@ let userpk = {{userpk}};
 let contractpk = {{contractpk}};
 let signContract = {{signContract}};
 
-console.log(userpk);
+console.log(`userpk: ${userpk}`);
 
-// getData(`/api/contract/${contractpk}/`).then((data) =>{
-// 	console.log(`Data: ${data}`);
-// 	document.querySelector('#pdf_display').src = data.contract
-// });
 
-getData("/get_image/contracts/algos.pdf/").then((data) =>{
-
-	console.log(data);
-
-	document.querySelector('#pdf_display').src = data;
-});
 
 
 var canvas = document.querySelector("canvas");
@@ -81,7 +71,15 @@ function displaySignature(userpk, contractpk){
 	getData(`/api/user_contract/user/${userpk}/document/${contractpk}/`)
 	.then((data)=>{
 		console.log(data);
-		document.querySelector("#sigImg").src = data[0].signature;
+		// /media/contractSignatures/ekildog_useragreement_0aJV9jO.png
+		let urlSplit = data[0].signature.split("/");
+		
+		
+		getData(`/get_image/${urlSplit[1]}/${urlSplit[2]}/`)
+		.then((httpImg)=>{
+			console.log(data);
+			document.querySelector("#sigImg").src = httpImg;
+		});
 
 	});
 }
