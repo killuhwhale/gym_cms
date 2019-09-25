@@ -48,10 +48,12 @@ console.log(userpk);
 // 	console.log(`Data: ${data}`);
 // 	document.querySelector('#pdf_display').src = data.contract
 // });
+
 getData(`/get_image/contracts/algos.pdf/`).then((data) =>{
 	console.log(`Data: ${data}`);
 	console.log(data);
-	document.querySelector('#pdf_display').src = data
+	
+	document.querySelector('#pdf_display').src = data;
 });
 
 
