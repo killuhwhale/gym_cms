@@ -5,7 +5,7 @@
 // User status
 function UserPanel(props){
 	let img_src = "/get_image/qr_codes/" + props.img_src;
-
+	console.log(`imgSrc: $imgSrc`);
 	// console.log(props);
 	let payment_url = "/membership_payment/" + props.id;
 
