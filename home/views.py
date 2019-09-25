@@ -392,7 +392,7 @@ class GetImage(APIView):
             # Build video path with filename
             servefilename = "{0}/{1}".format(folder, filename)
             # Build nginx path
-            nginxpath = "/protected/{0}".format(servefilename)
+            nginxpath = "/protected/media/{0}".format(servefilename)
             
             response = HttpResponse()
             del response["Content-Type"]
@@ -402,7 +402,7 @@ class GetImage(APIView):
             response["Pragma"] = "no-cache"
             response["Expires"] = "0"
         
-            return Response(response)
+            return response
         return Response("no folder or filename given.")
 
 
