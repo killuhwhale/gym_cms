@@ -73,7 +73,7 @@ function displaySignature(userpk, contractpk){
 		console.log(data);
 		// /media/contractSignatures/ekildog_useragreement_0aJV9jO.png
 		let urlSplit = data[0].signature.split("/");
-		
+		print(`urlSplit: ${urlSplit}`);
 		
 		getData(`/get_image/${urlSplit[1]}/${urlSplit[2]}/`)
 		.then((httpImg)=>{
