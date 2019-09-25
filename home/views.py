@@ -383,8 +383,32 @@ class CanceledSubscriptions(TemplateView):
 class UserContracts(TemplateView):
     template_name = "home/user_contracts.html"
 
+class GetImage(APIView):
+    
+    def get(self, request, folder=None, filename=None):
+        if folder is not None and filename is not None: 
+            # Build video path with filename
+            servefilename = "{0}/{1}".format(folder, filename)
+            # Build nginx path
+            nginxpath = "/media/{0}".format(servefilename)
+            print("nginxpath", nginxpath)
+            
+            response = HttpResponse()
+            response["Content-Type"] = 'image/*'
+            response["Content-Disposition"] = "INLINE"
+            response["X-Accel-Redirect"] = nginxpath
+            response["Cache-Control"] = "no-cache, no-store, must-revalidate"
+            response["Pragma"] = "no-cache"
+            response["Expires"] = "0"
+            print(response)
+            return response
+        return Response("no folder or filename given.")
+
+
+
 class AdminPanel(TemplateView):
     template_name = "home/admin_panel.html"
 
 class RemoveCustomerSource(TemplateView):
     template_name = "home/removeCustomerSource.html"
+

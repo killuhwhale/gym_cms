@@ -24,5 +24,6 @@ urlpatterns = [
 	path('charge_refund/', views.ChargeRefund.as_view(), name="charge_refund"),
 	path('show_charge_refund/', views.ShowChargeRefund.as_view(), name="show_charge_refund"),
 	path('admin_panel/', views.AdminPanel.as_view(), name="admin_panel"),
-	path('remove_source/', views.RemoveCustomerSource.as_view(), name="remove_source")
+	path('remove_source/', views.RemoveCustomerSource.as_view(), name="remove_source"),
+	path('get_image/<str:folder>/<str:filename>/', views.GetImage.as_view(), name="get_image"),
 ]
