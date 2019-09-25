@@ -4,7 +4,8 @@
 
 // User status
 function UserPanel(props){
-	let img_src = "/media/qr_codes/" + props.img_src;
+	let img_src = "/get_image/qr_codes/" + props.img_src;
+
 	// console.log(props);
 	let payment_url = "/membership_payment/" + props.id;
 
@@ -20,7 +21,8 @@ function UserPanel(props){
 			<div className="col-6">blank</div>
 
 			<div className="col-6">
-				<img src={img_src}/>
+				
+				<iframe src ={img_src}/>
 			</div>
 			<div className="col-6">
 				<span className="align-middle"> 

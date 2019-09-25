@@ -17,7 +17,8 @@ Pay Membership
 		</div>
 	</div>
 	<div class="col-12" name="signatureImg">
-		<iframe src="" id="sigImg"></iframe>
+		<iframe src="" id="sigImg" style='width: 67%; display: none;'></iframe>
+		<h3>Signature</h3>
 	</div>
 	<div class="col-12" name="signaturepad">
 		<canvas style="border-bottom: 3px solid black;"></canvas>
@@ -66,7 +67,7 @@ function displaySignature(userpk, contractpk){
 	document.querySelectorAll("[name='signaturepad']").forEach((el)=>{
 		el.hidden = true;
 	});
-	
+	document.querySelector("#sigImg").display = 'block';
 	
 	getData(`/api/user_contract/user/${userpk}/document/${contractpk}/`)
 	.then((data)=>{
