@@ -395,7 +395,14 @@ class GetImage(APIView):
             nginxpath = "/protected/media/{0}".format(servefilename)
             
             response = HttpResponse()
-            del response["Content-Type"]
+            mimes = {
+                'pdf': 'application/pdf',
+                'png': "image/png",
+                "jpeg": 'image/jpeg',
+                "jpg": 'image/jpg'
+            }
+            ext = filename[filename.index(".")+1:]
+            response["Content-Type"] = mimes[ext] if ext in mimes else "*/*"
             response["X-Accel-Redirect"] = nginxpath
             
             response["Cache-Control"] = "no-cache, no-store, must-revalidate"
