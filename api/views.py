@@ -194,10 +194,13 @@ class StripeSubscriptionsAPI(APIView):
             return Response(list())
         
         subs = list()
-        for sub in data.auto_paging_iter():
-            subs.append(SubscriptionSerializer(sub).data)
-        
-        return Response(subs)
+        if data is not None:
+            for sub in data.auto_paging_iter():
+                subs.append(SubscriptionSerializer(sub).data)
+            
+            return Response(subs)
+        else:
+            return Response(list())
 
     def delete(self, request, sub_id=None):
         if(sub_id):
