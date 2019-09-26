@@ -22,7 +22,7 @@ function UserPanel(props){
 
 			<div className="col-6">
 				
-				<iframe src ={img_src}/>
+				<img src ={img_src}/>
 			</div>
 			<div className="col-6">
 				<span className="align-middle"> 
