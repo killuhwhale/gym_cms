@@ -401,7 +401,8 @@ class GetImage(APIView):
                 "jpeg": 'image/jpeg',
                 "jpg": 'image/jpg'
             }
-            ext = filename[filename.index(".")+1:]
+            
+            ext = filename[filename.find(".")+1:]
             response["Content-Type"] = mimes[ext] if ext in mimes else "*/*"
             response["X-Accel-Redirect"] = nginxpath
             
