@@ -21,11 +21,14 @@ Products
 <script type="text/babel">
 
 function Product(props){
-	
+	console.log(props);
+	let imgUrl = props.img.split("/");
+	let img_src = `/get_image/${imgUrl[2]}/${imgUrl[3]}`;
+
 	return(
 		<div className="col-6">
 			<h2> {props.name} </h2>
-			<img className='img-thumbnail' src={props.img}/>
+			<img className='img-thumbnail' src={img_src}/>
 			<h3> {props.price} </h3>
 			<input type="number" id={props.id} name="product"
 			onChange={() => props.onChange(props.id)}/> 

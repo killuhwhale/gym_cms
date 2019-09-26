@@ -387,7 +387,6 @@ class UserContracts(TemplateView):
 class GetImage(APIView):
     
     def get(self, request, folder=None, filename=None):
-        
         if folder is not None and filename is not None:
             # Build video path with filename
             servefilename = "{0}/{1}".format(folder, filename)

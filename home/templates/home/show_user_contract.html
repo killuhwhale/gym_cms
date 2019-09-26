@@ -13,7 +13,8 @@ Pay Membership
 		User Agreement
 		<div id="embed" class="embed-responsive embed-responsive-16by9">
 		  <!-- <embed id="pdf_display" class="embed-responsive-item"> -->
-		  	<iframe src="/get_image/contracts/algos.pdf/"></iframe>
+		  	<!-- <iframe src="/get_image/contracts/algos.pdf/"></iframe> -->
+		  	<iframe id="pdf_display"></iframe>
 		</div>
 	</div>
 	<div class="col-12" name="signatureImg">
@@ -61,6 +62,12 @@ window.onresize = () => {
 };
 
 
+function displayContract(contractUrl){
+	cUrl = contractUrl.split("/");
+	cReq = `/get_image/${cUrl[2]}/${cUrl[3]}`;
+	document.querySelector("#pdf_display").src = cReq;
+
+}
 
 
 function displaySignature(userpk, contractpk){
@@ -73,9 +80,12 @@ function displaySignature(userpk, contractpk){
 	getData(`/api/user_contract/user/${userpk}/document/${contractpk}/`)
 	.then((data)=>{
 		console.log(data);
+		displayContract(data[0].contract);
 		// /media/contractSignatures/ekildog_useragreement_0aJV9jO.png
 		let urlSplit = data[0].signature.split("/");
+
 		console.log(`urlSplit: ${urlSplit.toString()}`);
+		
 		let docUrl = `/get_image/${urlSplit[2]}/${urlSplit[3]}/`; 
 		document.querySelector("#sigImg").src = docUrl;
 		
