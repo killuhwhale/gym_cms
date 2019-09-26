@@ -113,10 +113,13 @@ class StripeChargesAPI(APIView):
         
         else:
             return Response(list())
-    
-        charges = self.filter_charges(data, show)
-        print("Length: {}".format(len(charges)))
-        return Response(charges)
+
+        if data is not None:
+            charges = self.filter_charges(data, show)
+            print("Length: {}".format(len(charges)))
+            return Response(charges)
+        else:
+            return Response(list())
 
 
     def post(self, request):
