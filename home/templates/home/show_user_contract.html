@@ -14,7 +14,8 @@ Pay Membership
 		<div id="embed" class="embed-responsive embed-responsive-16by9">
 		  <!-- <embed id="pdf_display" class="embed-responsive-item"> -->
 		  	<!-- <iframe src="/get_image/contracts/algos.pdf/"></iframe> -->
-		  	<iframe id="pdf_display"></iframe>
+		  	<object id="pdf_display" type="application/pdf"></object>
+
 		</div>
 	</div>
 	<div class="col-12" name="signatureImg">
@@ -44,9 +45,11 @@ Pay Membership
 <script>
 let userpk = {{userpk}};
 let contractpk = {{contractpk}};
-let signContract = {{signContract}};
+let signedContract = {{signContract}};
 
 console.log(`userpk: ${userpk}`);
+console.log(`contractpk: ${contractpk}`);
+console.log(`signContract: ${signedContract}`);
 
 
 
@@ -61,41 +64,64 @@ window.onresize = () => {
 	canvas.width = (window.innerWidth * .6);
 };
 
+// return list [folder, filename]
+function splitMediaUrl(rawUrl){
+	// /media/contractSignatures/ekildog_useragreement_0aJV9jO.png
+	// rawUrl.split('/') ==> ['', media, contractSignatures, ekildog_useragreement_0aJV9jO.png]
+	return rawUrl.split("/").slice(2);
+}
 
 function displayContract(contractUrl){
-	cUrl = contractUrl.split("/");
-	cReq = `/get_image/${cUrl[2]}/${cUrl[3]}`;
-	document.querySelector("#pdf_display").src = cReq;
+	cUrl = splitMediaUrl(contractUrl);
+	if (cUrl.length > 1){
+		cReq = `/get_image/${cUrl[0]}/${cUrl[1]}`;
+		console.log(`Contract request: ${cReq}`);
+		document.querySelector("#pdf_display").data = cReq;		
+	}else{
+		console.error(`Could not parse contract url: ${contractUrl}`);
+	}
 
 }
 
+
+// Display signature: called if signContract == 0
+// 1. User Contract displayed.
 
 function displaySignature(userpk, contractpk){
 	// Hide Signature pad buttons
 	document.querySelectorAll("[name='signaturepad']").forEach((el)=>{
 		el.hidden = true;
 	});
+	// Show
 	document.querySelector("#sigImg").display = 'block';
 	
+
+	// get contract url from pk information
 	getData(`/api/user_contract/user/${userpk}/document/${contractpk}/`)
 	.then((data)=>{
 		console.log(data);
 		displayContract(data[0].contract);
 		// /media/contractSignatures/ekildog_useragreement_0aJV9jO.png
-		let urlSplit = data[0].signature.split("/");
-
-		console.log(`urlSplit: ${urlSplit.toString()}`);
-		
-		let docUrl = `/get_image/${urlSplit[2]}/${urlSplit[3]}/`; 
-		document.querySelector("#sigImg").src = docUrl;
-		
-
+		let sigUrl = splitMediaUrl(data[0].signature);
+		if(sigUrl.length > 1){
+			document.querySelector("#sigImg").src = `/get_image/${sigUrl[0]}/${sigUrl[1]}/`;
+		}else{
+			console.error(`Could not parse signature url: ${sigUrl}`);
+		}
 	});
 }
 
 
 
 function createSignaturePad(){
+	// if creating the signature pad, display default contract
+	getData(`/api/contract/${contractpk}/`)
+	.then((data)=>{
+		console.log(`Default contract data: ${data}`);
+		console.log(data);
+		displayContract(data.contract);
+	});
+
 	var signaturePad = new SignaturePad(canvas);
 
 	signaturePad.on();
@@ -111,13 +137,13 @@ function createSignaturePad(){
 		}else{
 			console.log();
 			let png = signaturePad.toDataURL();
-			let signedContract = {
+			let userSignedContract = {
 				"signature": png,
 				"userpk" : userpk,
 				"contractpk" : contractpk,
 			};
 
-			postData("/api/user_contract/", signedContract).then((data) => {
+			postData("/api/user_contract/", userSignedContract).then((data) => {
 				console.log(data);
 				document.querySelector('#embed').style.display = "none";
 				document.querySelectorAll('[name="signaturepad"]').forEach( (el) =>{
@@ -134,7 +160,7 @@ function createSignaturePad(){
 	});	
 }
 
-if(signContract == 0){
+if(signedContract == 0){
 	displaySignature(userpk, contractpk);
 }else{
 	createSignaturePad();

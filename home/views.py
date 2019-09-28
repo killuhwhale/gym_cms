@@ -45,7 +45,9 @@ class CreateUser(TemplateView):
     
     def post(self, request):
         form = self.form_class(request.POST)
-        user_agreement = 1    
+        # @param user_agreement refers to the pk of the document
+        # This is the document the user will sign upon registration.
+        user_agreement = 1 
         if form.is_valid():
             #Create object to save later (does not save to DB)
             user = form.save(commit = False)
@@ -81,7 +83,7 @@ class CreateUser(TemplateView):
             # except:
             #     print("Could not create user's subscriptions")
 
-            ## Generate QR code and grab image. Displayw
+            ## Generate QR code and grab image. Display
 
             if user is not None and p_match:
                 
@@ -103,7 +105,7 @@ class CreateUser(TemplateView):
                 
                 userid = UserID()
                 userid.user = user
-                userid.qr_code=code
+                userid.qr_code = code
                 userid.save()
                 
                 userid.qr_img.save("qrcodes", InMemoryUploadedFile(
@@ -404,7 +406,7 @@ class GetImage(APIView):
             ext = filename[filename.find(".")+1:]
             response["Content-Type"] = mimes[ext] if ext in mimes else "*/*"
             response["X-Accel-Redirect"] = nginxpath
-            
+            # response["Content-Disposition"] = "inline"
             response["Cache-Control"] = "no-cache, no-store, must-revalidate"
             response["Pragma"] = "no-cache"
             response["Expires"] = "0"
