@@ -6,14 +6,17 @@ Pay Membership
 {% endblock %}
 
 {% block body %}
-
+<style type="text/css">
+	.pdf_display{
+		width: 67%;
+		margin: 0 auto;
+	}
+</style>
 
 <div class="row text-center">
 	<div class="col-12">
 		User Agreement
-		<div id="embed" class="embed-responsive embed-responsive-16by9">
-		  <!-- <embed id="pdf_display" class="embed-responsive-item"> -->
-		  	<!-- <iframe src="/get_image/contracts/algos.pdf/"></iframe> -->
+		<div id="embed" class="embed-responsive embed-responsive-16by9 pdf_display" style="width: 67%; margin: 0 auto;">
 		  	<object id="pdf_display" type="application/pdf"></object>
 
 		</div>
@@ -24,7 +27,11 @@ Pay Membership
 		<h3>Signature</h3>
 	</div>
 	<div class="col-12" name="signaturepad">
-		<canvas style="border-bottom: 3px solid black;"></canvas>
+		<canvas style="border-bottom: 3px solid black;
+						border-top: 3px solid green;
+						border-left: 3px solid green;
+						border-right: 3px solid green;
+						"></canvas>
     </div>
     <div class="col-12" name="signaturepad">
         <button type="button" class="button" data-action="clear">Clear</button>
