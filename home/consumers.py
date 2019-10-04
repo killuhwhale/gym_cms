@@ -29,7 +29,7 @@ class CamConsumer(WebsocketConsumer):
 
 	def receive(self, text_data=None):
 		text_data = json.loads(text_data)
-		print("Message Recevied \n", text_data)
+		# print("Message Recevied \n", text_data)
 		async_to_sync(self.channel_layer.group_send)(
 			self.room_group_name,
 			{
@@ -40,13 +40,13 @@ class CamConsumer(WebsocketConsumer):
 	
 
 	def scan_qr_code(self, event):
-		print("Scanning...\n", event)
+		# print("Scanning...\n", event)
 		cut_beginning = len("data:image/png;base64,")
 		if(len(event['text'])>cut_beginning):
 			# # Get Base64 data from WebSocket as a string
 			frame = event['text'][cut_beginning:]
 			img = None
-			print(frame[:50])
+			# print(frame[:50])
 			sec_byte_array = base64.b64decode(frame)
 		
 			im_array = np.asarray(bytearray(sec_byte_array), dtype=np.uint8)
@@ -54,7 +54,7 @@ class CamConsumer(WebsocketConsumer):
 			
 			scan = scanner.Scanner()
 			code = scan.from_img(img)
-			print("Code: {}".format(code))
+			# print("Code: {}".format(code))
 			self.send(text_data=str(code))	
 		else:
 			self.send(text_data="False")

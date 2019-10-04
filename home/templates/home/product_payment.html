@@ -36,7 +36,8 @@ Product Payment
 	<div class="col-10 offset-1">
 		<h1> Cart </h1>
 		<div id="cart"></div>
-		<button id="make_payment" style="display: none;">PAY</button>
+		<div id="cartTotal"></div>
+		<button id="make_payment" style="display: none;" class="form-control btn btn-outline-success">PAY</button>
 		<div id='root'></div>
 	</div>
 </div>
@@ -66,64 +67,49 @@ Product Payment
 		<h3 id='qr_result'></h3>
 	</div>
 </div>
-<div class="row text-center">
-	<div class="col-12">
-		<h1><a href="/product_payment_anon/">Or use card</a></h1>
-		<hr>
-		
-	</div>
-</div>	
 
 
 <!-- React User panel -->
 
-<script  src="{% static 'home/js/ajax_helper.js' %}"></script>
+<script src="{% static 'home/js/ajax_helper.js' %}"></script>
+<script src="/lib/user_panel_react.js"></script>
+<script src="{% static 'home/js/webcam.js' %}"></script>
 
-<script type="text/babel" src="{% static 'home/js/user_panel_react.js' %}"></script>
-
-
-<script type="text/javascript" 
-	src="{% static 'home/js/user_code_parser.js' %}"></script>
-<script type="text/javascript" src="{% static 'home/js/webcam.js' %}"></script>
-
-
-
-<script type="text/babel">
-
-function showPanel(qr_code){
-	// let pairs = qr_code.split(',');
-	// let pk = pairs[pairs.length-1].split(':')[1];
-	let pk = getIdFromQRCode(qr_code);
-	
-	let root = document.getElementById("root");
-	ReactDOM.unmountComponentAtNode(root);
-	ReactDOM.render(<ShowUserPanel userpk= {pk}/>, root);
+<script>
+function ProductDisplayTemplate({name, price, qty, subtotal}){
+	return `${name} $${price}ea (${qty}) $${fmtNumber(subtotal)}`;
 }
-</script>
+// [{'subtotal': 7.98, 'product_name': 'sport drink', 'product_price':  3.99, 'pk': 1, 'qty': '2'}
+let cartData = [];
+let cartTotal = 0;
 
-<script type="text/javascript">
-function ProductDisplayTemplate({product_name, product_price, qty, subtotal}){
-	return `${product_name} $${product_price}ea (${qty}) $${subtotal}`;
-}
+function initCartData(){
+	// holds {pk: qty}
+	let selectedItems = new Map(JSON.parse(window.localStorage.getItem("productCart")));
+	let items = null;
+	let cartDiv = document.querySelector("#cart");
+	let tmpcartTotal = 0;
+	// get product data from a set of primary keys
+	postData("/api/gym_products/pks/", {"pks": Array.from(selectedItems.keys())})
+	.then((data)=>{
+		// 
+		cartData = data.map((item)=>{
+			let tmpQty = selectedItems.get(item.id);
+			item.qty = tmpQty;
+			item.subtotal = parseFloat(tmpQty) * parseFloat(item.price);
+			tmpcartTotal += parseFloat(item.subtotal);
+			cartDiv.innerHTML += ProductDisplayTemplate(item) + "</br>";
+			return {
+				"pk": item.id,
+				"subtotal": item.subtotal,
+				"qty": tmpQty,
+				"product_name": item.name,
+				"product_price": item.price
+			};
+		});
 
-function getCart(callback){
-	postData('/api/cart_session/', {"EM":"pty"})
-	.then((data) => {
-		console.log('cart');
-		console.log(data);
-		if(data.cart != "None"){
-			let cartDiv = document.getElementById('cart');
-			cartDiv.innerText = ""; // ensure it is empty before appending
-			for(let obj of data[0]){
-				let row_data = ProductDisplayTemplate(obj);
-				cartDiv.innerText += row_data + "\n";
-			}
-			cartDiv.innerText += `Total is: $${data[1]}`;
-			callback(data);
-		}else{
-			document.getElementById('prompt'). innerText = "No cart, please go back and select items...";
-			callback(null);
-		}
+		document.querySelector("#cartTotal").innerHTML = `<h2>Total: $${fmtNumber(tmpcartTotal)}</h2>`;
+		cartTotal = tmpcartTotal;
 	});
 }
 
@@ -137,17 +123,13 @@ function onMessageCallback(e){
 		}, 200);
 	}else{;
 		// scanner.close();
-		document.getElementById('qr_result').innerText = e.data;
-		let pk = decodeQRCodeToPK(e.data);
-		showUserPayment(pk);
+		document.querySelector('#qr_result').innerText = e.data;
+		showUserPayment(e);
 
 		setTimeout(()=>{
 			scanner.getImage();
 		}, 1500);
 	}
-		
-
-
 }
 
 
@@ -213,78 +195,62 @@ snapshotBtn.addEventListener('click', (ev) => {
 
 function testPayment(pk){
 	let default_user = {"data":`location:turlock,gym:19,id:${pk}`};
-	showUserPayment(default_user);		
+	showUserPayment(default_user);	
 }
 
 function showUserPayment(qr_code){
 		console.log(qr_code);
-		showPanel(qr_code.data);
+		showPanel(document.querySelector("#root"), decodeQRCodeToPK(qr_code.data));
 		
 		// show PAY button
-		let button = document.getElementById('make_payment');
+		let button = document.querySelector('#make_payment');
 		button.style.display = "block";		
 
 		// PAY button
 		button.addEventListener("click", (ev) => {
 			// users pk from qr code (purchaser)
-			let pk = getIdFromQRCode(qr_code.data);
+			let pk = decodeQRCodeToPK(qr_code.data);
 			console.log("Payment started");
-			// get current cart data from server (session)
-			getCart((cartData) => {
-				console.log("Getting cart data", cartData);
-				if(cartData != "False"){
-					// data needed to make a charge to stripe 
-					// cartData [ [{}, {}...], cart_total]
-					let purchaseData = {"userpk":pk, "cart": cartData};
-					// Hide button once clicked
-					document.getElementById('make_payment').style.display = "none";
-					// send data to server to make stripe charge for user
-					console.log("Making payment");
-					postData("/api/make_product_payment/", 
-							purchaseData)
-					.then((data) => {
-						// // console.log(`THIS: ${this}`);
-						// console.log(this.onmessage);
-						// console.log(this);
-						if(data == 'PaymentSuccessful'){
-							//show modal
-							console.log("showing modal...");
-							document.getElementById('modal-title').innerText = "Success";
-							document.getElementById('modal-body').innerText = "Payment was successful!";
+			// get current cart data from localStorage
+			if(cartData.length > 1){
+				let purchaseData = {"userpk":pk, "cart": [cartData, cartTotal]};
+				// Hide button once clicked
+				document.getElementById('make_payment').style.display = "none";
+				// send data to server to make stripe charge for user
+				console.log("Making payment");
+				postData("/api/make_product_payment/", 
+						purchaseData)
+				.then((data) => {
+					// // console.log(`THIS: ${this}`);
+					// console.log(this.onmessage);
+					// console.log(this);
+					if(data == 'PaymentSuccessful'){
+						//show modal
+						console.log("showing modal...");
+						document.getElementById('modal-title').innerText = "Success";
+						document.getElementById('modal-body').innerText = "Payment was successful!";
 
-
-							document.getElementById('paymentSuccessModal').click();
-							
-							
-						}else{
-							// show error response
-							console.log("showing error...");
-							alert(data);
-						}
-					});				
-				}
-			});
+						window.localStorage.removeItem(LOCAL_STOR_PRODUCT);
+						document.getElementById('paymentSuccessModal').click();
+						
+						
+					}else{
+						// show error response
+						console.log("showing error...");
+						alert(data);
+					}
+				});					
+			}
 		});
 }
 
 // Defining the callback with arrow functions allows it to have the scame scope as varaiable created in the page's script.
 
-
-getCart((data)=>{
-	if(data != null){
-		console.log("Init Cart Data: ");
-		console.log(data);
-		
-		
-		if(scanner.streamIsNull()){
-			startCameraButton.click();
-			
-		}	
-	}
-
-});
-
-
+initCartData();
+if(scanner.streamIsNull()){
+	startCameraButton.click();
+	
+}	
 </script>
 
 

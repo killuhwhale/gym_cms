@@ -9,14 +9,14 @@ Member Status
 <div class="row text-center">
 	<div class="col-12">
 		<button id='scan_for_user'
-			 class="btn btn-primary">SCAN</button>
+			 class="btn btn-outline-primary">SCAN</button>
 		<button id="search_for_user" 
-			class="btn btn-secondary">SEARCH</button>
+			class="btn btn-outline-secondary">SEARCH</button>
 	</div>
 </div>
 
 <br/>
-<div id="search_root"></div>
+<div id="search_root" style="max-height: "></div>
 <div class="row">
 	<div class="col-12 text-center">
 		<button style="display: none;" id="snapshot">
@@ -26,12 +26,11 @@ Member Status
 		<!-- Video Element == Users camera -->
 		<video></video>
 		<div id="controls">
-			<button id="start" class="btn btn-success">Start</button>
-			<button id="stop" class="btn btn-danger">Stop</button>
+			<button id="start" class="btn btn-outline-success">Start</button>
+			<button id="stop" class="btn btn-outline-danger">Stop</button>
 		</div>
 	</div>
-	<!-- Image from Camera -->
-	<!-- <img id="image" src="" width="640" height="360"/>  -->
+
 </div>
 
 <div class='row'>
@@ -41,35 +40,10 @@ Member Status
 	</div>
 </div>
 
-
 <!-- React User panel -->
-
-<script  src="{% static 'home/js/ajax_helper.js' %}"></script>
-
-<script type="text/babel" src="{% static 'home/js/user_panel_react.js' %}"></script>
-
-
-<script type="text/babel"
-	src="{% static 'home/js/user_list_react.js' %}"></script>
-
-
-<script type="text/babel">
-
-	function decodeQRCodeToPK(qr_code){
-		if(qr_code != "False"){
-			let pairs = qr_code.split(',');
-			let pk = pairs[pairs.length-1].split(':')[1];
-			return pk;
-		}
-	}
-
-	function showPanel(pk){
-		let root = document.getElementById("root");
-		ReactDOM.unmountComponentAtNode(root);
-		ReactDOM.render(<ShowUserPanel userpk= {pk}/>, root);
-	}
-</script>
-
+<script src="{% static 'home/js/ajax_helper.js' %}"></script>
+<script src="/lib/user_panel_react.js"></script>
+<script src="/lib/user_list_react.js"></script>
 
 <script type="text/javascript" src="{% static "home/js/webcam.js" %}"></script>
 <script type="text/javascript">
@@ -80,7 +54,7 @@ let user_pk = {{ userpk }};
 function check_default_user(pk){
 	console.log("PK: " + pk);
 	if(pk != -1){
-		showPanel(pk);
+		showPanel(document.querySelector("#root"), pk);
 	}
 }
 check_default_user(user_pk);
@@ -107,7 +81,6 @@ socket.onclose = () => {
 	document.querySelector('video').style.border = "5px solid red";
 };
 
-
 // video-start
 startCameraButton.addEventListener('click', (ev) => {
 	if(scanner.socketIsNull()){
@@ -133,15 +106,12 @@ stopCameraButton.addEventListener('click', (ev) => {
 	}
 });
 
-
 // snapshot button to take snape shot
 snapshotBtn.addEventListener('click', (ev) => {
 	if(scanner){
 		scanner.getImage();
 	}
 });
-
-
 
 function onMessageCallback(e){
 	// console.log(e.data);
@@ -154,21 +124,17 @@ function onMessageCallback(e){
 	}else{;
 		// scanner.close();
 		document.getElementById('qr_result').innerText = e.data;
-		showPanel(decodeQRCodeToPK(e.data));
+		showPanel(document.querySelector("#root"), decodeQRCodeToPK(e.data));
 		setTimeout(()=>{
 			scanner.getImage();
 		}, 1500);
 	}
-		
-
-
 }
-
 
 let scan_for_user = document.querySelector("#scan_for_user");
 scan_for_user.addEventListener("click", (ev) => {
 	
-	hideSearch();
+	hideSearch(document.querySelector("#search_root"));
 
 	
 	document.querySelector("#start").style.display = "-webkit-inline-box";
@@ -180,20 +146,16 @@ scan_for_user.addEventListener("click", (ev) => {
 	}	
 });
 
-
 let search_for_user = document.querySelector("#search_for_user");
 search_for_user.addEventListener("click", (ev) => {
 	hideScanner();
 
-	loadUserList("search_root", (id) => { 
+	loadUserList(document.querySelector("#search_root"), (id) => { 
 		console.log(`USer search id: ${id}`);
-		showPanel(id);
+		showPanel(document.querySelector("#root"), id);
 	});
 		
 });
-
-
-
 
 function hideScanner(){
 	document.querySelector("#start").style.display = "none";
@@ -204,17 +166,5 @@ function hideScanner(){
 		scanner.close();
 	}
 }
-
-function hideSearch(){
-	let root = document.querySelector("#search_root");
-	ReactDOM.unmountComponentAtNode(root);
-}
-
 </script>
-
-
-
-
-
-
 {% endblock %}

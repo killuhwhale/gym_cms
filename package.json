@@ -1,0 +1,29 @@
+{
+  "name": "gym_cms",
+  "version": "1.0.0",
+  "description": "Gymez.ml - Gym Management Simplified",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "babel src -d lib --presets=@babel/env"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andaya92/gym_cms.git"
+  },
+  "author": "Chris Andaya",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/andaya92/gym_cms/issues"
+  },
+  "homepage": "https://github.com/andaya92/gym_cms#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.6.2",
+    "@babel/core": "^7.6.2",
+    "@babel/preset-env": "^7.6.2",
+    "@babel/preset-react": "^7.0.0"
+  },
+  "dependencies": {
+    "babel-preset-react": "^6.24.1"
+  }
+}

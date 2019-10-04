@@ -263,7 +263,7 @@ class MembershipPayment(TemplateView):
         return render(request, "home/payment_result.html", {"isSuccessful": isSuccessful,
                                                              "charge": charge,
                                                              "subscription":subscription})
-
+## Deprecated
 class ProductPaymentAnon(TemplateView):
     template_name = "home/product_payment_anon.html"
 
@@ -327,6 +327,11 @@ class ProductPaymentAnon(TemplateView):
 class ProductPayment(TemplateView):
     template_name = "home/product_payment.html"
     ## populates session from post request from gym prouct page
+    def get(self, request):
+        return render(request, self.template_name)
+
+
+
     def post(self, request):
         product_cart = json.loads(request.POST['products'])
         # Get ids for each product

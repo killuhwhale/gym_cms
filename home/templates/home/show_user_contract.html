@@ -15,31 +15,37 @@ Pay Membership
 
 <div class="row text-center">
 	<div class="col-12">
-		User Agreement
+		<h1>User Agreement</h1>
 		<div id="embed" class="embed-responsive embed-responsive-16by9 pdf_display" style="width: 67%; margin: 0 auto;">
 		  	<object id="pdf_display" type="application/pdf"></object>
 
 		</div>
 	</div>
-	<div class="col-12" name="signatureImg">
+</div>
+<div class="row text-center">
+	<div class="col-1"></div>
+	<div class="col-10" name="signatureImg">
 		<!-- <iframe src="" id="sigImg" style='width: 67%; display: none;'></iframe> -->
-		<img id ="sigImg">
+		<img id ="sigImg" style="width:100%;">
 		
+	</div>		
+</div>
+<div class="row">
+	
+    <div class="col-2 align-self-end" name="signaturepad">
+		<h4 class="text-center">SIGNATURE</h4>
+    </div>
+	<div class="col-8" name="signaturepad">
+		<canvas style="border-bottom: 3px solid black;"></canvas>
+    </div>
+    
+</div>
+
+<div class="row">
+	<div class="col-12 text-center" name="signaturepad">
+	    <button type="button" class="button btn btn-outline-danger" data-action="clear">Clear</button>
+	    <button type="button" class="button save btn btn-outline-primary" data-action="save-png">Save as PNG</button>
 	</div>
-	<div class="col-12" name="signaturepad">
-		<canvas style="border-bottom: 3px solid black;
-						border-top: 3px solid green;
-						border-left: 3px solid green;
-						border-right: 3px solid green;
-						"></canvas>
-    </div>
-    <div class="col-12" name="signaturepad">
-        <button type="button" class="button" data-action="clear">Clear</button>
-        <button type="button" class="button save" data-action="save-png">Save as PNG</button>
-    </div>
-    <div class="col-12">
-		<h3 class="text-center">Signature</h3>
-    </div>
 </div>
 
 <div class="row" id="success"></div>

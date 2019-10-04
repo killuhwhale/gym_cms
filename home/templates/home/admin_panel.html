@@ -28,26 +28,24 @@ table{
 
 <script  src="{% static 'home/js/ajax_helper.js' %}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.js"></script>
-<script type="text/babel" src="{% static 'home/js/react_admin_all_users.js' %}"></script>
-<script type="text/babel" src="{% static 'home/js/react_admin_all_charges.js' %}"></script>
-<script type="text/babel" src="{% static 'home/js/react_admin_all_subscriptions.js' %}"></script>
-<script type="text/babel" src="{% static 'home/js/react_admin_all_products.js' %}"></script>
-
-
+<script src="/lib/react_admin_all_users.js"></script>
+<script src="/lib/react_admin_all_charges.js"></script>
+<script src="/lib/react_admin_all_subscriptions.js"></script>
+<script src="/lib/react_admin_all_products.js"></script>
 
 <script type="text/javascript">
 
 	document.querySelector("#show_all_users").addEventListener("click", (ev) => {
-		reactAdminGetUsers("main_root");
+		reactAdminGetUsers(document.querySelector("#main_root"));
 	});
 	document.querySelector("#show_all_charges").addEventListener("click", (ev) => {
-		reactAdminGetCharges("main_root");
+		reactAdminGetCharges(document.querySelector("#main_root"));
 	});
 	document.querySelector("#show_all_subs").addEventListener("click", (ev) => {
-		reactAdminGetSubs("main_root");
+		reactAdminGetSubs(document.querySelector("#main_root"));
 	});
 	document.querySelector("#show_all_products").addEventListener("click", (ev) => {
-		reactAdminGetProducts("main_root");
+		reactAdminGetProducts(document.querySelector("#main_root"));
 	});
 		
 </script>

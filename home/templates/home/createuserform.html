@@ -12,7 +12,7 @@
 				{% include 'home/form_template.html' %}
 				<div>
 				<input id="id_password1" type="password" name="password_check" required/><br>
-				<input type="submit" value="Create" class="btn btn-primary large-text form-button"/>
+				<input type="submit" value="Create" class="btn btn-outline-primary large-text form-button"/>
 				</div>
 			</form>	
 		</div>
@@ -26,10 +26,13 @@
 			let f3 = document.getElementById('id_password1');
 			f1.placeholder = 'Username';
 			f2.placeholder = 'Password';
-			f3.placeholder = 'Password';
+			f3.placeholder = 'Password Confirm';
 			f1.classList.add("form-control");
+			f1.classList.add("text-center");
 			f2.classList.add("form-control");
+			f2.classList.add("text-center");
 			f3.classList.add("form-control");
+			f3.classList.add("text-center");
 		};
 		setPlaceHolders();
 	</script>

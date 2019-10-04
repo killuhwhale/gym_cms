@@ -38,7 +38,7 @@
 			</div>
 
 			<h1>Search</h1>
-			<button id="get_users" class="btn btn-primary"> Search Clients </button>
+			<button id="get_users" class="btn btn-outline-primary"> Search Clients </button>
 			<hr>
 
 			<div id="contracts"></div>
@@ -50,10 +50,6 @@
 		</div>
 	</div>
 	<hr/>
-	<hr/>
-	<hr/>
-	<hr/>
-
 	<div class="row text-center">
 		<div class="col-6 offset-3">
 			<!-- Root for user panel -->
@@ -64,112 +60,28 @@
 
 <script  src="{% static 'home/js/ajax_helper.js' %}"></script>
 
-<script type="text/babel" src="{% static 'home/js/user_panel_react.js' %}"></script>
-<script type="text/babel" src="{% static 'home/js/user_list_react.js' %}"></script>
+<script src="/lib/user_panel_react.js"></script>
+<script src="/lib/user_list_react.js"></script>
+<script src="/lib/user_contracts.js"></script>
 
 
-<script type="text/babel">
-
-
-function DocuBtn(props){
-	let btnColor = (props.userHas)? "docuBtnOnFile": "docuBtnNotOnFile";
-	let onFileText = (props.userHas)? " - On File" : " - Not on File";
-
-	let classes = `btn ${btnColor}`;
-	return(
-		<a href={props.link} target="_blank" className={classes}>
-			{props.title} {onFileText} 
-		</a>
-	);
-}
-
-
-class UserDocuments extends React.Component{
-	constructor(props){
-		super(props);
-		this.state = {
-			allDocs : [],
-			userDocs : []
-		};
-		this.getAllDocuments();
-	}
-
-	getAllDocuments(){
-
-		getData(`/api/contract/`)
-		.then((data)=>{
-			console.log("COntract data");
-			console.log(data);
-			this.setState({
-				allDocs: data
-			});	
-
-			console.log("user contracts");
-			getData(`/api/user_contract/user/${this.props.userid}/`)
-			.then((userContracts)=>{
-				userContracts = userContracts.map(({title}) => title);
-				console.log(userContracts);
-				this.setState({
-					userDocs: userContracts
-				});
-			})
-			.catch((err)=>{
-				console.log(err);
-
-			});
-
-
-		});
-	}
-
-	render(){
-
-		let items = this.state.allDocs;
-		console.log("Items");
-		console.log(items);
-		let partial_link = `/show_user_contract/${this.props.userid}/`;
-		return(
-			<div id="btn-box">
-				{
-					items.map((el)=>{
-						let userHas = this.state.userDocs.indexOf(el.title) > -1;
-						let signContract = (userHas)? 0 : 1;
-						return(<DocuBtn key = {el.id}
-								id = {el.id}
-								title = {el.title}
-								userid = {this.props.userid}
-								link = {`${partial_link}${el.id}/${signContract}/`}
-								userHas = {userHas}/>
-						);
-					})
-				}
-			</div>
-		);
-	}
-}
-
-
-function showUserDocuments(userpk){
-	let root = document.getElementById("contracts");
-	ReactDOM.unmountComponentAtNode(root);
-	ReactDOM.render(<UserDocuments userid = {userpk}/>,
-					root);	
-}
-
-
-
-
+<script>
 // Load ShowUserPanel
 //    shows user selected from list
-
-document.querySelector("#get_users").addEventListener("click", (ev)=>{
-	
-	// React componet, takes root node and callback when a user is selected
-	//			returns user id that was clicked
-	loadUserList("root", (id)=>{
-		showUserDocuments(id);
-	});	
+getData(`/api/contract/`)
+.then((data)=>{
+	document.querySelector("#get_users").addEventListener("click", (ev)=>{
+		// React componet, takes root node and callback when a user is selected
+		//			returns user id that was clicked
+		loadUserList(document.querySelector("#root"), (id)=>{
+			console.log("Showing document for user with all docs as:");
+			console.log(data);
+			showUserDocuments(document.querySelector("#contracts"), data, id);
+		});	
+	});
 });
+
+
 
 
 </script>

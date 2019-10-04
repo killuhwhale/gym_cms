@@ -50,6 +50,16 @@ class GymProductAPI(APIView):
             for p in products:
                 data.append(GymProductSerializer(p).data)
             return Response(data)
+    def post(self, request):
+        print(request.data['pks'])
+        product_cart = request.data['pks']
+        # Get ids for each product
+        
+        selected = GymProduct.objects.filter(id__in=product_cart)
+        data = list()
+        for p in selected:
+            data.append(GymProductSerializer(p).data)
+        return Response(data)
 
 ## gte_time : timestamp (miliseconds) of beginning date range
 ## lte_time : timestamp (miliseconds) of ending date range
@@ -140,6 +150,7 @@ class StripeChargesAPI(APIView):
         print("Cart total: {}".format(cart_total))
         print("Cart items: {}".format(cart_items))
         print("")
+
         # Look Up customer id
         tax = 0.09
 
@@ -160,10 +171,6 @@ class StripeChargesAPI(APIView):
             )
 
         if charge.paid:        
-            request.session.pop('cart')
-            request.session.pop('cart_total')
-            request.session.modified = True
-            print("Logging purchase")
             # log_gym_product_sale.delay(cur_user.id, cart_items, 0.0, charge['receipt_url'], charge['id'])
             return Response("PaymentSuccessful")
         return Response("Error making payments")
@@ -283,23 +290,6 @@ class UserContractAPI(APIView):
             return Response(error)
         return Response("Contract Saved")
 
-class CurrentCartSession(APIView):
-    def post(self, request):
-        print(request.session.keys())
-        if(("cart" in request.session.keys()) and
-            ("cart_total" in request.session.keys())):
-            data = [request.session['cart'], 
-                    request.session['cart_total']]
-            return Response(data)
-        return Response({"cart" : "None", "cart_total": "None"})
-
-    def delete(self, request):
-        if(("cart" in request.session.keys()) and
-            ("cart_total" in request.session.keys())):
-            del request.session['cart'],
-            del request.session['cart_total']
-            return Response("Delete successful")
-        return Response("Keys not in sesssion")
 
 # 1. Lookup charge on stripe
 # 2. Calc amount to refund

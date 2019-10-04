@@ -7,10 +7,13 @@
     		Default Title
     	{% endblock title %}
     </title>
+
     <!-- React -->
-        <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react@16/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script>
+             <!-- <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
         <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
-        <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+        <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script> -->
 
     <!-- Bootstrap -->
 
@@ -30,6 +33,37 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
     <script>
         var CSRF_TOKEN = '{{ csrf_token }}';
+
+        var QTY_SELECT_1 = 1; // btn in product_list.js and react_product_cart.js
+        var QTY_SELECT_2 = 2;
+        var QTY_SELECT_5 = 5;
+        var QTY_SELECT_10 = 10;
+        var QTY_SELECT_MAX_VAL = 10;
+        var LOCAL_STOR_PRODUCT = "productCart";
+
+        function fmtNumber(n){
+            let nStr = n.toString();
+            let L = nStr.length;
+            let decimalIdx = nStr.indexOf(".");
+            if(decimalIdx > 0){
+                let numDecimals = L - decimalIdx - 1;
+                if (numDecimals > 1){
+                    return nStr.substring(0, decimalIdx + 3);
+                }else if(numDecimals == 1){
+                    return nStr + "0";
+                }
+            }else{
+                return nStr + ".00";
+            }
+        }
+
+        function decodeQRCodeToPK(qr_code){
+            if(qr_code != "False"){
+                let pairs = qr_code.split(',');
+                let pk = pairs[pairs.length-1].split(':')[1];
+                return pk;
+            }
+        }
     </script>
 </head>
 <body>
@@ -40,7 +74,7 @@
 
         .search-results{
             overflow-y: scroll;
-            max-height: 485px;
+            max-height: 300px;
         }
         .loader {
           border: 10px solid #f3f3f3;
@@ -50,6 +84,20 @@
             height: 10px;
             -webkit-animation: spin 2s linear infinite;
             animation: spin 2s linear infinite;
+        }
+
+        .bucket-border{
+            background-color: ghostwhite;
+            margin-bottom: 2em;
+        }
+        .cart{
+            background-color: ghostwhite;
+            padding: 1em 3em 1em 3em;
+        }
+
+        .product-thm-nail{
+            width: auto;
+            height: 15em;
         }
 
         /* Safari */

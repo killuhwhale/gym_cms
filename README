@@ -1,5 +1,8 @@
 Gym CMS
 
+React:
+	- babel in src, used cmd to compile and output in lib
+		- npm run build
 
 Payments:
 

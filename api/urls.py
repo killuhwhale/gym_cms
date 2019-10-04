@@ -8,7 +8,7 @@ urlpatterns = [
 	path('get_users/', views.UsersAPI.as_view(), name="get_users"),
 	path('get_users/<int:pk>/', views.UsersAPI.as_view()),
 	path('gym_products/', views.GymProductAPI.as_view(), name="API_gym_products"),
-	path('cart_session/', views.CurrentCartSession.as_view(), name="cart_session"),
+	path('gym_products/pks/', views.GymProductAPI.as_view(), name="API_gym_products"),
 	path('make_product_payment/', views.StripeChargesAPI.as_view(), name="make_product_payment"),
 
 	path('stripe_charges/cus/<int:userpk>/<str:show>/', views.StripeChargesAPI.as_view(), name="stripe_charge_API"),

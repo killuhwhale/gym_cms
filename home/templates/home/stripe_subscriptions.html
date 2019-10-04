@@ -47,159 +47,21 @@ Member Status
 <!-- React User panel -->
 
 <script  src="{% static 'home/js/ajax_helper.js' %}"></script>
-
 <script  src="{% static 'home/js/cssSpinner.js' %}"></script>
-
-<script type="text/babel" src="{% static 'home/js/user_panel_react.js' %}"></script>
-
-
-<script type="text/babel"
-	src="{% static 'home/js/user_list_react.js' %}"></script>
+<script src="/lib/user_panel_react.js"></script>
+<script src="/lib/user_list_react.js"></script>
+<script src="/lib/stripe_subscriptions.js"></script>
 
 
 <script type="text/babel">
 
-function decodeQRCodeToPK(qr_code){
-	if(qr_code != "False"){
-		let pairs = qr_code.split(',');
-		let pk = pairs[pairs.length-1].split(':')[1];
-		return pk;
-	}
-}
 
 
-function getSubscriptions(pk){
-	getData(`/api/stripe_subscriptions/${pk}/0/0/active/`)
-	.then((data) => {
-		console.log(`data: ${data}`);
-		if(data != "False"){
-			let root = document.getElementById('subs_root');
-			ReactDOM.unmountComponentAtNode(root);
-			console.log(data);
-			ReactDOM.render(<SubscriptionItemList subs = {data}/>, root);
-		}else if(data == "False"){
-			alert("No subscriptions found for member!");
-		}
-	})
-	.catch((err) => {
-		console.error(`%c Search User Error: ${err}`, "color: red;");
-	});
-
-}
 </script>
 
 
 <script type="text/javascript" src="{% static "home/js/webcam.js" %}"></script>
 
-<script type="text/babel">
-
-function SubscriptionItem(props){
-		let spinnerId  = `spinner_${props.id}`;
-		let rowStyle = (props.status == "active")? "table-success":"table-info";
-		return(
-			<tbody className="table-hover">
-				<tr className={rowStyle}>
-					<td>
-						<span className="d-inline-block text-truncate">{props.id}</span>
-					</td>
-					<td>
-						<span className="d-inline-block text-truncate">{props.username}</span>
-					</td>
-					<td>
-						<span className="d-inline-block text-truncate">{props.start}</span>
-					</td>
-					<td>
-						<span className="d-inline-block text-truncate">{props.status}</span>
-					</td>
-					<td>
-						<span className="d-inline-block text-truncate">{props.name}</span>
-					</td>
-					<td>
-						<span className="d-inline-block text-truncate">{props.desc}</span>
-					</td>
-					<td>
-						<span className="d-inline-block text-truncate">{props.price}</span>
-					</td>
-					<td>
-						<span className="d-inline-block text-truncate">{props.interval}</span>
-					</td>
-					<td><span id={spinnerId}>
-						<button className="btn btn-danger btn-sm" id={props.id} onClick={ (ev) => { props.onclick(props.id)} }>
-						Cancel</button>
-					</span></td>
-
-				</tr>
-			</tbody>
-		);
-	}
-
-	class SubscriptionItemList extends React.Component{
-		constructor(props){
-			super(props);
-			this.state = {
-				subs: props.subs
-			};
-		}
-
-		cancelSubscription(id){
-			if(confirm("Are you sure you want to cancel this subscription?")){
-				setSpinner(id, "spinner");
-				deleteData(`/api/stripe_subscriptions/cus/${id}/`)
-				.then( (response) => {
-					hideSpinner("spinner");
-					if(response == "False"){
-						alert("Error deleting subscription");
-					}else{
-						alert(response);
-					}
-					console.log(`%c Delete resp: ${response}`, "color: orange;");
-				} );
-			}
-		}
-
-		render(){
-			let items = this.props.subs;
-			let key_index = 0;
-			return(
-				<table className="table table-responsive text-center table-bordered table-sm" key="-0" align="center">
-				<thead className="thead-dark" key="-1">
-				<tr key="-2">
-					<th> Sub Id </th>
-					<th> Username </th>
-					<th> Created </th>
-					<th> Sub Status </th>
-					<th> Name </th>
-					<th> Desc </th>
-					<th> Price </th>
-					<th> Stripe Interval </th>
-					<th> Cancel </th>
-				</tr>
-				</thead>
-				{
-				items.map((el) => {					
-					return(
-						<SubscriptionItem key = {key_index++}
-							id = {el.id} 
-							username = {el.username}
-							created = {el.created}
-							start = {el.start}
-							amount = {el.amount}
-							nickname = {el.nickname}
-							interval = {el.interval}
-							name = {el.products.name}
-							desc = {el.products.desc}
-							price = {el.products.price}
-							status = {el.status} 
-							onclick = {this.cancelSubscription} />
-					)
-				})
-				}
-				</table>
-			);
-		}
-	}
-
-</script>
 
 <script type="text/javascript">
 
@@ -259,10 +121,6 @@ snapshotBtn.addEventListener('click', (ev) => {
 	}
 });
 
-
-
-
-
 function onMessageCallback(e){
 	// console.log(e.data);
 	if(e.data=="False"){
@@ -275,7 +133,7 @@ function onMessageCallback(e){
 		// scanner.close();
 		document.getElementById('qr_result').innerText = e.data;
 		let pk = decodeQRCodeToPK(e.data);
-		getSubscriptions(pk);
+		getSubscriptions(document.querySelector('subs_root'), pk);
 
 		setTimeout(()=>{
 			scanner.getImage();
@@ -290,7 +148,7 @@ function onMessageCallback(e){
 let scan_for_user = document.querySelector("#scan_for_user");
 scan_for_user.addEventListener("click", (ev) => {
 	
-	hideSearch();
+	hideSearch(document.querySelector("#search_root"));
 
 	
 	document.querySelector("#start").style.display = "-webkit-inline-box";
@@ -307,9 +165,9 @@ let search_for_user = document.querySelector("#search_for_user");
 search_for_user.addEventListener("click", (ev) => {
 	hideScanner();
 
-	loadUserList("search_root", (id) => { 
+	loadUserList(document.querySelector("#search_root"), (id) => { 
 		console.log(`USer search id: ${id}`);
-		getSubscriptions(id);
+		getSubscriptions(document.querySelector('#subs_root'), id);
 	});
 		
 });
@@ -326,12 +184,6 @@ function hideScanner(){
 		scanner.close();
 	}
 }
-
-function hideSearch(){
-	let root = document.querySelector("#search_root");
-	ReactDOM.unmountComponentAtNode(root);
-}
-
 </script>
 
 
