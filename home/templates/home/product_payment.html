@@ -218,12 +218,8 @@ function showUserPayment(qr_code){
 				document.getElementById('make_payment').style.display = "none";
 				// send data to server to make stripe charge for user
 				console.log("Making payment");
-				postData("/api/make_product_payment/", 
-						purchaseData)
+				postData("/api/make_product_payment/", purchaseData)
 				.then((data) => {
-					// // console.log(`THIS: ${this}`);
-					// console.log(this.onmessage);
-					// console.log(this);
 					if(data == 'PaymentSuccessful'){
 						//show modal
 						console.log("showing modal...");
@@ -239,7 +235,11 @@ function showUserPayment(qr_code){
 						console.log("showing error...");
 						alert(data);
 					}
-				});					
+				})
+				.catch((err)=>{
+					console.log("error");
+					console.error(err);
+				});
 			}
 		});
 }
