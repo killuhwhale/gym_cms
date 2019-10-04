@@ -212,12 +212,13 @@ function showUserPayment(qr_code){
 			let pk = decodeQRCodeToPK(qr_code.data);
 			console.log("Payment started");
 			// get current cart data from localStorage
-			if(cartData.length > 1){
+			if(cartData.length > 0){
 				let purchaseData = {"userpk":pk, "cart": [cartData, cartTotal]};
 				// Hide button once clicked
 				document.getElementById('make_payment').style.display = "none";
 				// send data to server to make stripe charge for user
 				console.log("Making payment");
+				console.log(purchaseData);
 				postData("/api/make_product_payment/", purchaseData)
 				.then((data) => {
 					console.log("data make_product_payment");
