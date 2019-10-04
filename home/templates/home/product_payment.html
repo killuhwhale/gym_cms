@@ -220,6 +220,8 @@ function showUserPayment(qr_code){
 				console.log("Making payment");
 				postData("/api/make_product_payment/", purchaseData)
 				.then((data) => {
+					console.log("data make_product_payment");
+					console.log(data);
 					if(data == 'PaymentSuccessful'){
 						//show modal
 						console.log("showing modal...");
