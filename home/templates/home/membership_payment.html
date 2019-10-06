@@ -37,90 +37,26 @@ Pay Membership
 </div>
 
 
-<script  src="{% static 'home/js/ajax_helper.js' %}"></script>
-
-<script type="text/babel" src="{% static 'home/js/user_panel_react.js' %}"></script>
-
-
-<script type="text/babel">
-
-// Check if user has Membership already
+<script src="{% static 'home/js/ajax_helper.js' %}"></script>
+<script src="/lib/user_panel_react.js"></script>
+<script src="/lib/membership_payment.js"></script>
 
 
 
-// React def
-function MembershipPackage(props){
-	return (
-		<div className="col-4 membership-package">
-			<div className="card" >
-				<img src="..." className="card-img-top" alt="..."/>
-				<div className="card-body">
-					<p> {props.pkg_price} </p>
-					<input type="radio" id={props.pkg_name}
-						name="m_plans"  value={props.id} className="radio"/>
-					<label htmlFor={props.pkg_name} className="label">
-						{props.pkg_desc}
-					</label>
-				</div>
-			</div>
-		</div>
-	);
-}
-
-class ShowMembershipPackage extends React.Component{
-	constructor(props){
-		super(props);
-		this.state = {
-			packages: props.packages
-		};
-	}
-
-	render(){
-		let pkgs = this.state.packages;
-		return(
-			<div className="row justify-content-center">
-				{
-					pkgs.map( (el)=> {
-						return <MembershipPackage key = {el.id}
-									id = {el.id}
-									pkg_name = {el.name}
-									pkg_price = {el.price}
-									pkg_desc = {el.desc} />
-					})
-				}
-			</div>
-		);
-	}
-
-}
-</script>
-
-
-<script type="text/babel">
+<script>
 let user_pk = "{{ userpk }}";
 console.log("User pk: " + user_pk);
 
 function showStatus(pk){
 	// function replaceRoot
-	let root = document.getElementById("user_status_root");
-	ReactDOM.unmountComponentAtNode(root);
-	ReactDOM.render(<ShowUserPanel userpk= {pk}/>, root);
+	showPanel(document.querySelector("#user_status_root"), user_pk);
 	// hide 'Make Payment' button on this page
 	document.getElementById('make_payment').style.display = "none";
 }
 
 showStatus(user_pk);
 
-
-
-// Normal Js to use react
-let root = document.getElementById("root");
-ReactDOM.unmountComponentAtNode(root);
-
-getData("/api/memberships/").then((data)=>{
-	console.log(data);
-	ReactDOM.render(<ShowMembershipPackage packages= {data}/>, root);
-});
+showMembershipPackage(document.querySelector("#root"));
 </script>
 
 {% endblock %}
