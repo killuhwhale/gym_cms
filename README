@@ -7,7 +7,7 @@ React:
 Payments:
 
 Customer Id from stripe
-	- created during first payment
+	- created during first membership payment
 
 Charge
 	- create one off charge for specific amt w/ customer id
@@ -19,7 +19,6 @@ Plan
 
 Subscriptions
 	- Ties a Customer and Plan together
-
 
 Checkout Process Membership
 

@@ -64,6 +64,13 @@
                 return pk;
             }
         }
+
+        function alertMsg(msg){
+            return new Promise(resolve => {
+                alert(msg);
+                resolve();
+            });
+        }
     </script>
 </head>
 <body>

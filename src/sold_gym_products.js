@@ -126,6 +126,7 @@ class SoldProductList extends React.Component{
     render(){
         let items = this.state.products;
         return(
+            <div className = "table-responsive">
             <table className="table text-center table-bordered table-sm"  align="center">
             <thead className="thead-dark">
             <tr>
@@ -155,6 +156,7 @@ class SoldProductList extends React.Component{
             })
             }
             </table>
+            </div>
         );
     }
 }
@@ -162,16 +164,9 @@ class SoldProductList extends React.Component{
 function getCharges(root, id){
     getData(`/api/stripe_charges/cus/${id}/Gym Product/`)
     .then((data) => {
-        console.log(`data: ${data}`);
-        console.log(data);          
-        if(data.length > 0){
-            console.log("Sending data to React...");
-            ReactDOM.unmountComponentAtNode(root);
-            ReactDOM.render(<SoldProductList products= {data}
-                                user = {id}/>, root);
-        }else{
-            alert("No products found for user.");
-        }
+        ReactDOM.unmountComponentAtNode(root);
+        ReactDOM.render(<SoldProductList products= {data}
+                            user = {id}/>, root);
     })
     .catch((err) => {
         console.error(`%c Search User Error: ${err}`, "color: red;");

@@ -82,7 +82,8 @@ class SubscriptionItemList extends React.Component{
         let items = this.state.subs;
         let key_index = 0;
         return(
-            <table className="table table-responsive text-center table-bordered table-sm" key="-0" align="center">
+            <div className = "table-responsive">
+            <table className="table text-center table-bordered table-sm" key="-0" align="center">
             <thead className="thead-dark" key="-1">
             <tr key="-2">
                 <th> Created<br/>
@@ -118,6 +119,7 @@ class SubscriptionItemList extends React.Component{
             })
             }
             </table>
+            </div>
         );
     }
 }
@@ -125,15 +127,9 @@ class SubscriptionItemList extends React.Component{
 function getSubscriptions(root, pk){
     getData(`/api/stripe_subscriptions/${pk}/0/0/canceled/`)
     .then((data) => {
-        console.log(`data: ${data}`);
-        if(data.length > 0){
-            ReactDOM.unmountComponentAtNode(root);
-            console.log(data);
-            ReactDOM.render(<SubscriptionItemList subs = {data}
-                                user ={pk}/>, root);
-        }else{
-            alert("No subscriptions found for member!");
-        }
+        ReactDOM.unmountComponentAtNode(root);
+        ReactDOM.render(<SubscriptionItemList subs = {data}
+                            user ={pk}/>, root);
     })
     .catch((err) => {
         console.error(`%c Search User Error: ${err}`, "color: red;");

@@ -9,62 +9,69 @@
 
 <ul class="navbar-nav nav-tabs mr-auto text-center">
 	<li class="nav-item">
-		<a class="nav-link" href="/">Home <span class="sr-only"></span></a>
+		<a class="nav-link" href="/" name="#home">Home</a>
 	</li>
 	<li class="nav-item">
-		<a class="nav-link" href="/scan_code/">Check-in</a>
+		<a class="nav-link" href="/scan_code/" name="#checkin">Check-in</a>
 	</li>
 	<li class="nav-item">
-		<a class="nav-link" href="/create_user/">Register</a>
+		<a class="nav-link" href="/create_user/" name="#register">Register</a>
 	</li>
 </ul>
 <ul class="navbar-nav nav-tabs text-center justify-content-end">
 	 <li class="nav-item dropdown ">
-	    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Member Status</a>
+	    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" name="#member" role="button" aria-haspopup="true" aria-expanded="false">Member Status</a>
 	    <div class="dropdown-menu text-center dropdown-menu-right">
-			<a class="nav-link" href="/user_status/">Memberships</a>
-			<a class="nav-link" href="/user_contracts/">Contracts</a>
+			<a class="dropdown-item" href="/user_status/" name="member">Memberships</a>
+			<a class="dropdown-item" href="/user_contracts/" name="member">Contracts</a>
 		</div>
 	<li>	
 
 	
 	<li class="nav-item">
-		<a class="nav-link" href="/gym_products/">Products</a>
+		<a class="nav-link" href="/gym_products/" name="#product">Products</a>
 	</li>
 	 <li class="nav-item dropdown ">
-	    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Payments</a>
+	    <a class="nav-link dropdown-toggle" data-toggle="dropdown" name="#payment" href="#" role="button" aria-haspopup="true" aria-expanded="false">Payments</a>
 	    <div class="dropdown-menu text-center dropdown-menu-right">
-			<a class="nav-link" href="/stripe_charges/">Membership Charges</a>
-			<a class="nav-link" href="/stripe_subscriptions/">Membership Subscriptions</a>
-			<a class="nav-link" href="/sold_gym_product/">Product Charges</a>
-			<a class="nav-link" href="/show_charge_refund/">Refunded Charges</a>
-			<a class="nav-link" 
+			<a class="dropdown-item" href="/stripe_charges/" name="payment">Membership Charges</a>
+			<a class="dropdown-item" href="/stripe_subscriptions/" name="payment">Membership Subscriptions</a>
+			<a class="dropdown-item" href="/sold_gym_product/" name="payment">Product Charges</a>
+			<a class="dropdown-item" href="/show_charge_refund/" name="payment">Refunded Charges</a>
+			<a class="dropdown-item" name="payment"
 				href="/stripe_subscriptions_canceled/">
 				Canceled Subscriptions</a>
 		</div>
 	</li>
-	<li class="nav-item dropdown ">
-	    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Admin</a>
-	    <div class="dropdown-menu text-center dropdown-menu-right">
-			<a class="nav-link" href="/charge_refund/">Refund Charge</a>
-			<a class="nav-link" href="/admin_panel/">Admin Panel</a>
+	<li class="nav-item dropdown" >
+	    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" name="#admin" role="button" aria-haspopup="true" aria-expanded="false">Admin</a>
+	    <div class="dropdown-menu text-center dropdown-menu-right" >
+			<a class="dropdown-item" href="/charge_refund/" name="admin">Refund Charge</a>
+			<a class="dropdown-item" href="/admin_panel/" name="admin">Admin Panel</a>
 		</div>
 	</li>
 </ul>
 </div>
 </nav>
 
+<script>
+	// Get current anchor node referring to this page
+	// Find name attr, set all nodes with same name tag with the active class
+	let curPagePath = window.location.pathname;
+	let curAnchor = document.querySelector(`[href='${curPagePath}']`);
+	console.log(curPagePath);
+	console.log(curAnchor);
+	if(curAnchor != null){
+		let tmp = curAnchor.name;
+		let curName = (tmp[0] == "#")? tmp: `#${tmp}`;
 
-<script type="text/javascript">
-	let links = document.querySelector('#navbarText').querySelectorAll("a");
-	let currentPage = document.querySelector("title").innerText.trim().toLowerCase();
-	for(let i =0; i<links.length; i++){
-		let link = links[i].innerText.toLowerCase();
-		// console.log(`%c ${currentPage} ... ${link}`, "color:yellow;");
-		if( link == currentPage){
-			let prevAttr = links[i].getAttribute('class');
-			links[i].setAttribute("class", "active "+prevAttr);
-		}
+		document.querySelectorAll(`[name='${curName}']`)
+		.forEach((el)=>{
+			let prevAttr = el.getAttribute("class");
+			el.setAttribute("class", `active ${prevAttr}`);
+		});
 	}
+
 </script>
+
 

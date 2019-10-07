@@ -15,11 +15,22 @@ table{
 		<h1>Admin Panel</h1>
 	</div>
 	<div class="col-2">
-		<h2>Options</h2>
-		<button id="show_all_users">Show Users</button>
-		<button id="show_all_charges">Show Charges</button>
-		<button id="show_all_subs">Show Subs</button>
-		<button id="show_all_products">Show Products</button>
+		<h2>Display</h2>
+		<div class="row">
+			<div class="col-6">
+				<button id="show_all_users" class="btn btn-outline-primary">Users</button>
+			</div>
+			<div class="col-6">
+				<button id="show_all_charges" class="btn btn-outline-secondary">Charges</button>
+			</div>
+			<div class="col-6">
+				<button id="show_all_subs" class="btn btn-outline-success">Subs</button>
+			</div>
+			<div class="col-6">
+				<button id="show_all_products" class="btn btn-outline-primary">Products</button>
+			</div>
+			
+		</div>
 	</div>
 	<div class="col-10">
 		<div id="main_root"></div>

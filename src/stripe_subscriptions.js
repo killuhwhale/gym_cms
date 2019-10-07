@@ -67,7 +67,8 @@ class SubscriptionItemList extends React.Component{
         let items = this.props.subs;
         let key_index = 0;
         return(
-            <table className="table table-responsive text-center table-bordered table-sm" key="-0" align="center">
+            <div className = "table-responsive">
+            <table className="table text-center table-bordered table-sm" key="-0" align="center">
             <thead className="thead-dark" key="-1">
             <tr key="-2">
                 <th> Sub Id </th>
@@ -101,6 +102,7 @@ class SubscriptionItemList extends React.Component{
             })
             }
             </table>
+            </div>
         );
     }
 }
@@ -108,14 +110,8 @@ class SubscriptionItemList extends React.Component{
 function getSubscriptions(root, pk){
     getData(`/api/stripe_subscriptions/${pk}/0/0/active/`)
     .then((data) => {
-        console.log(`data:`);
-        console.log(data.length);
-        if(data.length > 0){
-            // ReactDOM.unmountComponentAtNode(root);
-            ReactDOM.render(<SubscriptionItemList subs = {data}/>, root);
-        }else{
-            alert("No subscriptions found for member!");
-        }
+        ReactDOM.unmountComponentAtNode(root);
+        ReactDOM.render(<SubscriptionItemList subs = {data}/>, root);
     })
     .catch((err) => {
         console.error(`%c Search User Error: ${err}`, "color: red;");

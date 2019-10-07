@@ -15,7 +15,6 @@ Features:
 		- Single charge via user's qr_code
 			- FAST an QUICK payment via members qr_img
 
-	## To-Do
 	Admin Functions
 		- View charges by
 			- user search or scan
@@ -35,20 +34,20 @@ New Features
 - Promotions / discounts
 - guess passes
 - gift cards
-- personal 
+- personal training
+- renew membership using exisiting customer id 
+
 
 TO-DO
-	
-	Product Payments via user QR code, currently only works with entering card information.
-
-	View
-	- All canceled subscriptons
-
 	Setup
 	- API for taxing and adding fees
 
 	Celery 
 	- Tasks error and success handlers
 
+	- Date picker in Admin panels and Cutomer Lookups (chrges, subs, products...)
+	needs to renderitself in order to change the date.
+
 	- Admin views of 
-		- All Charges, subs, and sold gym product  with graphs
+		- All Charges, subs, and sold gym product  with graphs*
+		- Mostly done, needs refining. Labeled graphs essentially

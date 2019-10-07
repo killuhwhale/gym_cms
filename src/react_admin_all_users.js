@@ -50,7 +50,8 @@ class UserTable extends React.Component{
 	render(){
 		let items = this.state.users;
 		return(
-			<table className="table table-responsive text-center table-bordered table-sm"  align="center">
+		<div class="table-responsive">
+			<table className="table text-center table-bordered table-sm"  align="center">
 			<thead className="thead-dark">
 			<tr>
 				<th> Id </th>
@@ -59,8 +60,6 @@ class UserTable extends React.Component{
 				<th> QR Code </th>
 				<th> QR Img </th>
 				<th> Remaining Days </th>
-				<th> Last Membership Id </th>
-				<th> Last Membership Date </th>
 			</tr>
 			</thead>
 			<tbody className="table-hover">
@@ -79,6 +78,7 @@ class UserTable extends React.Component{
 			}
 			</tbody>
 			</table>
+		</div>
 		);
 	}
 }

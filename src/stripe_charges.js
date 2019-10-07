@@ -64,68 +64,67 @@ class ChargeItemList extends React.Component{
         
         getData(`/api/stripe_charges/${this.props.user}/${startTimestamp}/${endTimestamp}/Membership/`)
         .then((data) => {
-            console.log(data);
-            if(data.length > 0){
-                this.setState({
-                    charges: data
-                });
-            }else{
-                alert("No charges found for member!");
-            }
+            console.log(data); 
+            this.setState({
+                charges: data
+            });
         });
     }
 
     render(){
         let items = this.state.charges;
         return(
-            <table className="table table-responsive text-center table-bordered table-sm"  align="center">
-            <thead className="thead-dark">
-            <tr>
-                <th> Date<input id="_datepicker"  
-                        className="text-center" type="text"/>
-                </th>
-                <th> Charge Id </th>
-                <th> Membership </th>
-                <th> Desc </th>
-                <th> Price </th>
-                <th> Customer ID </th>
-                <th> Amount Charged* </th>
-                <th> Status </th>
-                <th> Last 4 </th>
-                <th> Receipt </th>
-            </tr>
-            </thead>
-            <tbody className="table-hover">
-            {
-            items.map((el) => {
-                return(
-                    <ChargeItem key = {el.id}
-                        id = {el.id} 
-                        name = {el.products.name}
-                        desc = {el.products.desc}
-                        price = {el.products.price}
-                        amount = {el.amount} 
-                        created = {el.created}
-                        customer = {el.customer}
-                        description = {el.description}
-                        username = {el.metadata.username}
-                        charge_type = {el.metadata.charge_type}
-                        type = {el.outcome_type}
-                        message = {el.seller_message}
-                        network_status = {el.network_status}
-                        last4 = {el.last4}
-                        receipt_url = {el.receipt_url}
-                        isRefunded = {el.is_refunded} />
-                )
-            })
-            }
-            <tr>
-            <td colSpan="10">
-                * Taxes and fees
-            </td>
-            </tr>
-            </tbody>
-            </table>
+            <div className = "table-responsive">
+                <table className="table text-center table-bordered table-sm"  align="center">
+                <thead className="thead-dark">
+                <tr>
+                    <th> Date<input id="_datepicker"  
+                            className="text-center" type="text"/>
+                    </th>
+                    <th> Charge Id </th>
+                    <th> Membership </th>
+                    <th> Desc </th>
+                    <th> Price </th>
+                    <th> Customer ID </th>
+                    <th> Amount Charged* </th>
+                    <th> Status </th>
+                    <th> Last 4 </th>
+                    <th> Receipt </th>
+                </tr>
+                </thead>
+                <tbody className="table-hover">
+                {
+                items.map((el) => {
+                    return(
+                        <ChargeItem key = {el.id}
+                            id = {el.id} 
+                            name = {el.products.name}
+                            desc = {el.products.desc}
+                            price = {el.products.price}
+                            amount = {el.amount} 
+                            created = {el.created}
+                            customer = {el.customer}
+                            description = {el.description}
+                            username = {el.metadata.username}
+                            charge_type = {el.metadata.charge_type}
+                            type = {el.outcome_type}
+                            message = {el.seller_message}
+                            network_status = {el.network_status}
+                            last4 = {el.last4}
+                            receipt_url = {el.receipt_url}
+                            isRefunded = {el.is_refunded} />
+                    )
+                })
+                }
+                <tr>
+                <td colSpan="10">
+                    * Taxes and fees
+                </td>
+                </tr>
+                </tbody>
+                </table>
+            </div>
+            
         );
     }
 }
@@ -134,11 +133,7 @@ class ChargeItemList extends React.Component{
 function getCharges(root, pk){
     getData(`/api/stripe_charges/cus/${pk}/Membership/`)
     .then((data) => {
-        if(data.length > 0){
-            ReactDOM.unmountComponentAtNode(root);
-            ReactDOM.render(<ChargeItemList charges = {data} user = {pk}/>, root);
-        }else{
-            alert("No charges found for member!");
-        }
+        ReactDOM.unmountComponentAtNode(root);
+        ReactDOM.render(<ChargeItemList charges = {data} user = {pk}/>, root);
     });
 }

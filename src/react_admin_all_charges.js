@@ -14,7 +14,6 @@ function reactAdminGetCharges(root){
 			}];
 		}
 		ReactDOM.unmountComponentAtNode(root);
-		console.log(charges);
 		ReactDOM.render(<ChargeTable charges= {charges}/>, root);
 	});
 }

@@ -6,4 +6,5 @@ gym_cms/settings.py
 gym_cms/env_settings_private.py
 *.pyci
 access.log
-error.log
+error.logi
+*.sock*

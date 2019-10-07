@@ -111,7 +111,8 @@ class ChargeItemList extends React.Component{
     render(){
         let items = this.state.charges;
         return(
-            <table className="table text-center table-responsive table-bordered table-sm"  align="center">
+            <div className = "table-responsive">
+            <table className="table text-center table-bordered table-sm"  align="center">
             <thead className="thead-dark">
             <tr>
                 <th> Date<br/>
@@ -152,6 +153,7 @@ class ChargeItemList extends React.Component{
             })
             }
             </table>
+            </div>
         );
     }
 }
@@ -159,15 +161,9 @@ class ChargeItemList extends React.Component{
 function getCharges(root, pk){
     getData(`/api/stripe_charges/cus/${pk}/all/`)
     .then((data) => {
-        console.log(`data: ${data}`);
-        if(data.length > 0){
-            ReactDOM.unmountComponentAtNode(root);
-            console.log(data);
-            ReactDOM.render(<ChargeItemList charges= {data}
-                                    user = {pk}/>, root);
-        }else{
-            alert("No charges found for member!");
-        }
+        ReactDOM.unmountComponentAtNode(root);
+        ReactDOM.render(<ChargeItemList charges= {data}
+                                user = {pk}/>, root);
     })
     .catch((err) => {
         console.error(`%c Search User Error: ${err}`, "color: red;");

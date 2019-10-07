@@ -79,7 +79,8 @@ class RefundItemList extends React.Component{
     render(){
         let items = this.state.refunds;
         return(
-            <table className="table table-responsive text-center table-bordered table-sm"  align="center">
+            <div className = "table-responsive">
+            <table className="table text-center table-bordered table-sm"  align="center">
             <thead className="thead-dark">
             <tr>
                 <th> Date<br/>
@@ -111,6 +112,7 @@ class RefundItemList extends React.Component{
             })
             }
             </table>
+            </div>
         );
     }
 }
@@ -119,14 +121,8 @@ class RefundItemList extends React.Component{
 function getCharges(root, pk){
     getData(`/api/stripe_charges/cus/${pk}/refunded/`)
     .then((data) => {
-        console.log(data);
-        if(data.length > 0){
-            ReactDOM.unmountComponentAtNode(root);
-            console.log(data);
-            ReactDOM.render(<RefundItemList refunds= {data}
-                                user = {pk}/>, root);
-        }else{
-            alert("No refunds found for member!");
-        }
+        ReactDOM.unmountComponentAtNode(root);
+        ReactDOM.render(<RefundItemList refunds= {data}
+                            user = {pk}/>, root);
     });
 }
