@@ -29,8 +29,10 @@ class User(AbstractUser):
 	# 		instance.rest_token = token.key
 	# 		instance.save()
 
-
 class UserID(models.Model):
+	'''
+	Represents user ID Card info
+	'''
 	user = models.ForeignKey(User, on_delete=models.CASCADE)
 	qr_img = models.ImageField(upload_to="qr_codes", default='default_qr.png')
 	qr_code = models.CharField(max_length=100, blank=True, null=True)
@@ -45,7 +47,7 @@ class MembershipPlan(models.Model):
 	desc = models.CharField(max_length=100, default = "30 day membership recurring")
 	price = models.FloatField(max_length=8, default = 25.0)
 	recurring = models.BooleanField(default=False)
-	duration = models.IntegerField(default=0)
+	duration = models.IntegerField(default=30)
 	# if customer wants recurring, plan_id will be tied to customer on stripe's side
 	plan_id = models.CharField(max_length=100, default = "None")
 
@@ -79,13 +81,12 @@ class GymProduct(models.Model):
 		return "({}) {} - ${} - {} - {}".format(self.id, self.name,self.price, self.sku, self.img)
 
 class Contract(models.Model):
-	contract = models.FileField(upload_to="contracts", default="user_agreement.pdf")
 	title = models.CharField(max_length = 100, default = "User Agreement")
+	contract = models.FileField(upload_to="contracts", default="user_agreement.pdf")
 	
 
 	def __str__(self):
 		return "{}".format(self.title)
-
 
 class UserContract(models.Model):
 	user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -97,4 +98,8 @@ class UserContract(models.Model):
 
 	class Meta:
 		unique_together = ("user", "contract")
+
+class UserCheckin(models.Model):
+	user = models.ForeignKey(User, on_delete=models.CASCADE)
+	date = models.DateField(default = datetime.date.today, null = True, blank = True)
 

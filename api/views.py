@@ -38,7 +38,7 @@ class MembershipAPI(APIView):
         else:
             plan = MembershipPlan.objects.get(pk=pk)
             if(plan):
-                return Response(MembershipSerializer(plan))
+                return Response(MembershipSerializer(plan).data)
         return Response("Failed getting membership plans.")
 
 # Products excluding memberships/ subscriptions
@@ -50,6 +50,7 @@ class GymProductAPI(APIView):
             for p in products:
                 data.append(GymProductSerializer(p).data)
             return Response(data)
+        return Response("No Products found")
     def post(self, request):
         print(request.data['pks'])
         product_cart = request.data['pks']
@@ -326,6 +327,16 @@ class RemainingDaysAPI(APIView):
         man = MembershipManager(userpk, -1)
         return Response(man.get_remaining_days())
 
+class UserCheckinAPI(APIView):
+    def post(self, request):
+        try:
+            pk = request.data['pk']
+            checkin = UserCheckin()
+            checkin.user_id = pk
+            checkin.save()
+            return Response("Checked in user: {}".format(pk))
+        except:
+            return Response("Failed to checkin user")
 
 def ts_to_date(ts):
     return datetime.fromtimestamp(ts).strftime('%Y-%m-%d')

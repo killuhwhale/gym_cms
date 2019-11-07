@@ -40,12 +40,21 @@ Products
 
 // get data, then display products, and cart will have reference to product list
 getData("/api/gym_products/").then((data)=>{
-	renderProductList("root", data);
-	renderCart("cartRoot", data);
+	console.log("data");
+	console.log(data);
+
+	if(data.length > 0){
+		renderProductList("root", data);
+		renderCart("cartRoot", data);
+	}else{
+		let noProductDiv = document.createElement('div');
+		noProductDiv.innerText = "No Products";
+		document.querySelector("#root").appendChild(noProductDiv);
+	}
 });	
 
 
 </script>
 
-{% endblock %}
+{% endblock %} 
 	

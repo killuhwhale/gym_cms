@@ -76,6 +76,7 @@ Product Payment
 <script src="{% static 'home/js/webcam.js' %}"></script>
 
 <script>
+
 function ProductDisplayTemplate({name, price, qty, subtotal}){
 	return `${name} $${price}ea (${qty}) $${fmtNumber(subtotal)}`;
 }

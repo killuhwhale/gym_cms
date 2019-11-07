@@ -1,16 +1,11 @@
 class Scanner {
-   
-
    constructor(socket, videoElement, autoStart=false){
-
       this._stream = null;
       this._socket = socket;
       this._constraints = { audio: false, video: { width: 640, height: 360 } }; 
       this._mcanvas = document.createElement("canvas");
       this._scale = 1.0;
-      
       this._videoElement = videoElement;
-
       this._autoStart = autoStart;
    }
 
@@ -54,10 +49,6 @@ class Scanner {
       this._socket.send(JSON.stringify(message));
       
    };
-
-
-
-
  
    // close scanner
    close(){

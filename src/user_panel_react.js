@@ -1,4 +1,3 @@
-
 // Given a userpk
 // Return a panel with proper info for user
 // User status

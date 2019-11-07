@@ -46,10 +46,18 @@ CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            "hosts": [('127.0.0.1', 6379)],
+            "hosts": [('localhost', 6379)],
         },
     },
 }
+
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ORIGIN_WHITELIST = [
+    'localhost:8001',
+    'https://www.sandiego.edu',
+    'http://localhost:8001',
+    "https://unpkg.com/react@16/umd/react.production.min.js"
+]
 
 # Application definition
 
@@ -57,6 +65,7 @@ INSTALLED_APPS = [
     'channels',
     'rest_framework',
     'home.apps.HomeConfig',
+    'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -66,6 +75,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -100,7 +110,7 @@ WSGI_APPLICATION = 'gym_cms.wsgi.application'
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
 DATABASES = {
-    'default': env['DATABASE']
+    'default': env['TEST_DATABASE']
 }
 
 # Password validation

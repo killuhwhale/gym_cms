@@ -54,6 +54,7 @@ class MembershipSerializer(serializers.Serializer):
 	desc = serializers.CharField(max_length=100)
 	price = serializers.FloatField()
 	recurring = serializers.CharField(max_length=10)
+	duration = serializers.IntegerField()
 	plan_id = serializers.CharField(max_length=100)
 
 class GymProductSerializer(serializers.Serializer):

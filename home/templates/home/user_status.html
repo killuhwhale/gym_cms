@@ -53,7 +53,7 @@ Member Status
 let user_pk = {{ userpk }};
 function check_default_user(pk){
 	console.log("PK: " + pk);
-	if(pk != -1){
+	if(pk > 0){
 		showPanel(document.querySelector("#root"), pk);
 	}
 }

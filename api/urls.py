@@ -4,9 +4,10 @@ from . import views
 app_name = "api"
 
 urlpatterns = [
-	path('memberships/', views.MembershipAPI.as_view(), name="api_memberships"),
 	path('get_users/', views.UsersAPI.as_view(), name="get_users"),
 	path('get_users/<int:pk>/', views.UsersAPI.as_view()),
+	path('memberships/', views.MembershipAPI.as_view(), name="api_memberships"),
+	path('memberships/<int:pk>/', views.MembershipAPI.as_view(), name="api_memberships"),
 	path('gym_products/', views.GymProductAPI.as_view(), name="API_gym_products"),
 	path('gym_products/pks/', views.GymProductAPI.as_view(), name="API_gym_products"),
 	path('make_product_payment/', views.StripeChargesAPI.as_view(), name="make_product_payment"),
@@ -24,5 +25,7 @@ urlpatterns = [
 	path('user_contract/document/<int:docpk>/', views.UserContractAPI.as_view(), name="user_contract_API"),
 	path('user_contract/user/<int:pk>/document/<int:docpk>/', views.UserContractAPI.as_view(), name="user_contract_API"),
 	path('charge_refund/', views.ChargeRefundAPI.as_view(), name="charge_refund_API_all_charges"),
-	path('remaining_days/<int:userpk>/', views.RemainingDaysAPI.as_view(), name="remaining_days_API")
+	path('remaining_days/<int:userpk>/', views.RemainingDaysAPI.as_view(), name="remaining_days_API"),
+
+	path('user_checkin/', views.UserCheckinAPI.as_view(), name="user_checkin")
 ]

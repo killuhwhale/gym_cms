@@ -54,7 +54,9 @@ function showStatus(pk){
 	document.getElementById('make_payment').style.display = "none";
 }
 
-showStatus(user_pk);
+if (user_pk != -1){
+	showStatus(user_pk);
+}
 
 showMembershipPackage(document.querySelector("#root"));
 </script>

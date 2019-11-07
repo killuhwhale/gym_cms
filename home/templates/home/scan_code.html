@@ -30,8 +30,6 @@ Check-in
 			<button id="stop" class="btn btn-outline-danger">Stop</button>
 		</div>
 	</div>
-	<!-- Image from Camera -->
-	<!-- <img id="image" src="" width="640" height="360"/>  -->
 </div>
 
 <div class='row'>
@@ -41,30 +39,12 @@ Check-in
 	</div>
 </div>
 
-
-<!-- React User panel -->
-<script type="text/javascript">
-
-	function decodeQRCodeToPK(qr_code){
-		if(qr_code != "False"){
-			let pairs = qr_code.split(',');
-			let pk = pairs[pairs.length-1].split(':')[1];
-			return pk;
-		}
-	}
-
-	
-</script>
-
 <script  src="{% static 'home/js/ajax_helper.js' %}"></script>
 
 <script src="/lib/user_panel_react.js"></script>
 <script src="/lib/user_list_react.js"></script>
 
-
-
-
-<script type="text/javascript" src="{% static "home/js/webcam.js" %}"></script>
+<script type="text/javascript" src="{% static 'home/js/webcam.js' %}"></script>
 <script type="text/javascript">
 
 let videoElement = document.querySelector('video'); 
@@ -77,12 +57,13 @@ let stopCameraButton =  document.querySelector('#stop');
 let socket = createSocket(websocketPath, onMessageCallback);
 let scanner = null;
 let autoStart = true;
-
+``
 socket.onopen = () => {
 	scanner = new Scanner(socket, videoElement, autoStart);
 	scanner.getUserWebcam();	
 	document.querySelector('video').style.border = "5px solid green";
 };
+
 socket.onclose = () => {
 	console.log("Closed socket");
 	document.querySelector('video').style.border = "5px solid red";
@@ -102,9 +83,6 @@ startCameraButton.addEventListener('click', (ev) => {
 			document.querySelector('video').style.border = "5px solid red";
 		};
 	}
-	
-	// Get user media
-	
 });
 
 stopCameraButton.addEventListener('click', (ev) => {
@@ -139,13 +117,11 @@ function onMessageCallback(e){
 	}
 }
 
-
 let scan_for_user = document.querySelector("#scan_for_user");
 scan_for_user.addEventListener("click", (ev) => {
 	
 	hideSearch(document.querySelector("#search_root"));
 
-	
 	document.querySelector("#start").style.display = "-webkit-inline-box";
 	document.querySelector("#stop").style.display = "-webkit-inline-box";
 	document.querySelector("video").style.display = "-webkit-inline-box";
@@ -155,7 +131,6 @@ scan_for_user.addEventListener("click", (ev) => {
 	}	
 });
 
-
 let search_for_user = document.querySelector("#search_for_user");
 search_for_user.addEventListener("click", (ev) => {
 	hideScanner();
@@ -163,12 +138,8 @@ search_for_user.addEventListener("click", (ev) => {
 	loadUserList(document.querySelector("#search_root"), (id) => { 
 		console.log(`USer search id: ${id}`);
 		showPanel(document.querySelector("#root"), id);
-	});
-		
+	});		
 });
-
-
-
 
 function hideScanner(){
 	document.querySelector("#start").style.display = "none";
@@ -181,10 +152,4 @@ function hideScanner(){
 }
 
 </script>
-
-
-
-
-
-
 {% endblock %}

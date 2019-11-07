@@ -26,12 +26,43 @@ import json
 import datetime
 import base64
 
+
+# Membership status: Search for users 
+# @param pk given => populates user panel for given pk
+# @param pk None => no user panel rendered
 class UserStatus(TemplateView):
     template_name = "home/user_status.html"
-
-    def get(self, request):
+    def get(self, request, pk=None):
+        if pk is not None:
+            return render(request, self.template_name, {"userpk": pk})
         return render(request, self.template_name, {"userpk": -1})
 
+def create_qr_code(code):
+    '''
+    Generates QR image from given data.
+    Returns byte array of QR image
+    '''
+    byte_arr = None
+    try:
+        qr = qrcode.QRCode(
+                version=1,
+                error_correction=qrcode.constants.ERROR_CORRECT_L,
+                box_size=10,
+                border=4,
+            )
+        qr.add_data(code)
+        qr.make(fit=True)
+
+        img = qr.make_image(fill_color="black", back_color="white")
+        byte_arr = io.BytesIO()
+        img.save(byte_arr, format='PNG')
+        byte_arr = byte_arr.getvalue()
+    except Exception as e:
+        print(e)
+    return byte_arr
+    
+
+# 
 class CreateUser(TemplateView):
     
     form_class = UserForm # forms.py
@@ -43,21 +74,25 @@ class CreateUser(TemplateView):
         form = self.form_class(None)
         return render(request, self.template_name, {'form': form})
     
+    #   
     def post(self, request):
         form = self.form_class(request.POST)
         # @param user_agreement refers to the pk of the document
         # This is the document the user will sign upon registration.
-        user_agreement = 1 
+        user_agreement = 1 # default user agreement pk in database
         if form.is_valid():
             #Create object to save later (does not save to DB)
             user = form.save(commit = False)
             p_match = False
+            qr_code_error = False
 
             #Clean and normalized data (proper formatting)
+            
             username = form.cleaned_data['username']
-            password = form.cleaned_data['password']    
+            password = form.cleaned_data['password']
             password1 = request.POST['password_check'] 
 
+            # check that passwords are both given and match
             if not password1:
                 form.add_error("password","You must confirm your password")
             elif password != password1:
@@ -68,160 +103,159 @@ class CreateUser(TemplateView):
                     user.set_password(password)
                     user.save()
                     print("User saved.")
+                    
                     #Returns User object if credentials are correct
                     user = authenticate(username=username, password=password)
                     p_match = True
                 except:
+                    form.add_error(None, "Error creating user.")
                     print('Error creating user')
 
-            # ## On a thread, create two subscriptions for a new user
-            # # Website and Snapchat == Holds days left of membership etc...
-            # try:
-            #     kwargs ={}
-            #     args = (user.id,None)
-            #     mythread = _thread.start_new_thread(self.createSubs,args,kwargs)
-            # except:
-            #     print("Could not create user's subscriptions")
-
-            ## Generate QR code and grab image. Display
-
+            ## Generate QR code and image            
+            # if user was created and their passwords match
             if user is not None and p_match:
-                
-                # Find python library to gnerate QR code.
-                code="location:turlock,gym:19,id:{}".format(user.id)
-                qr = qrcode.QRCode(
-                        version=1,
-                        error_correction=qrcode.constants.ERROR_CORRECT_L,
-                        box_size=10,
-                        border=4,
+                try:
+                    # this qr code will be unique to each gym in prod.
+                    code="location:turlock,gym:19,id:{}".format(user.id)
+                    
+                    # user id ties a user and qr_code together
+                    userid = UserID()
+                    userid.user = user
+                    userid.qr_code = code
+                    userid.save()
+                    
+                    # save to media/qrcodes/
+                    byte_arr = create_qr_code(code)
+                    userid.qr_img.save("qrcodes",
+                        InMemoryUploadedFile(
+                            ContentFile(byte_arr),   # file
+                            None,   # field name
+                            "qrcode_{}_{}.png".format(user.username, user.id), #file name
+                            "image/png", # content type
+                            None, #size
+                            None, #contentTypeExtra
+                        )
                     )
-                qr.add_data(code)
-                qr.make(fit=True)
+                except:
+                    form.add_error(None, "Error creating user qr code.")
+                    qr_code_error = True
+                    
 
-                img = qr.make_image(fill_color="black", back_color="white")
-                imgByteArr = io.BytesIO()
-                img.save(imgByteArr, format='PNG')
-                imgByteArr = imgByteArr.getvalue()
-                
-                userid = UserID()
-                userid.user = user
-                userid.qr_code = code
-                userid.save()
-                
-                userid.qr_img.save("qrcodes", InMemoryUploadedFile(
-                    ContentFile(imgByteArr),   # file 
-                    None,   # field name
-                    "qrcodes.png", #file name
-                    "image/png", # content type
-                    None, #size
-                     None, #contentTypeExtra
-                    ))
-                return render(request, "home/show_user_contract.html", {"userpk": user.id, "contractpk": user_agreement, "signContract": 1} )
+                # render contract signing page for the user that was made
+                # template parameters
+                #    userpk: user.id => pk of user just created
+                #    contractpk: user_agreement => default contract to have user sign, pk of document
+                #    signContract: 1 => 0 if signed, 1 if needs to be signed.
+                if not qr_code_error:
+                    return render(request, "home/show_user_contract.html", {"userpk": user.id, "contractpk": user_agreement, "signContract": 1})
 
+        # if form is not valid, creating user fails or creating UserID fails render form again with any error messages
         return render(request, self.template_name, {'form': form})
 
 class MembershipPayment(TemplateView):
     template_name = "home/membership_payment.html"
 
+    # To prevent multiple charges via multiple POST requests, session key 'payment_processed' with store a bool
+    #   - set to False in get request
+    #   - set to True in beginning of post method and if post requests are sent, only the first will complete processing
+    #       - A post request with session key 'payment_processed' set to True will redirect to get
+
+    # Return all memebership objects which represent memerbships to pay for
     def get(self, request, pk=-1):
         all_memberships = MembershipPlan.objects.all()
-        memberships = list()
-        for m in all_memberships:
-            memberships.append( MembershipSerializer(m).data )
+        memberships = [MembershipSerializer(m).data for m in all_memberships]
         request.session['payment_processed'] = False
         return render(request, self.template_name, {"userpk":pk, "membership_pkgs": memberships })
 
     def post(self, request):
-        print(request)
+        '''
+        Check if a payment is in process already
+        Get user, membershipPlan data from DB
+        Get stripe token from form
+        Init Membership Manger for user to update membership info for user
+        Make a subscription or charge to Stripe depending on given membership plan
+        If successful, update user membership info via Membership
+        '''
+
         if("payment_processed" in request.session):
-            print("Session started")
-            print(request.session['payment_processed'])
-            # check and toggle
+            print("Session started", request.session['payment_processed'])
             if(request.session['payment_processed']):
                 #redirect
-                print("Redirect")
                 return render(request, "home/user_status.html", {"userpk": request.POST['userpk']})
-            else:
-                request.session['payment_processed'] = True
-        else:
-            # init 
-            request.session['payment_processed'] = True
-        # Check if user just came from Checkout(Stripe form)
-        # If user refreshes page, send them home, do not re-process,
-        # Else, toggle paymentProcessed and actually process payment
-        cur_user = User.objects.get(pk=request.POST['userpk'])
-        print("Current user: {}".format(cur_user))
-        print(request.POST)
-        ## Get Stripe form data
+        request.session['payment_processed'] = True
+        
+        cur_user, m_plan = None, None
+        try:
+            cur_user = User.objects.get(pk=request.POST['userpk'])
+            m_plan = MembershipPlan.objects.get(pk=request.POST['m_plans'])
+        except Exception as e:
+            print(e)
+            print("Could not find information for: user pk {} - MembershipPlan pk {}".format(request.POST['userpk'], request.POST['m_plans']))
+        
         stripe.api_key = settings.STRIPE_API_KEY
+
         paymentType = request.POST['stripeTokenType'] 
         token =  request.POST['stripeToken']
         stripe_email = request.POST['stripeEmail']
 
-        # get plan from DB
-        m_plan = MembershipPlan.objects.get(pk=request.POST['m_plans'])
-        print(cur_user.id, m_plan.id)
-        print(MembershipManager)
-        membership_manager = MembershipManager(cur_user.id, m_plan.id)
-
-        print("Membership manager started!")
-        print("Valid: {}".format(membership_manager.valid))
-        print("Errors: {}".format(membership_manager.errors))
-        if not membership_manager.valid:
-            return render(request, "home/payment_result.html", {"isSuccessful": False,
-                                                             "charge": None,
-                                                             "subscription": None})
-
-         # Try to create a customer
+        
+        # Try to create a customer
         customerId = None
-
         if(cur_user.customer_id == "None"):
             try:
-                print('Creating customer...')
                 customer = stripe.Customer.create(
                     email = stripe_email,
                     source = token,
                     metadata = {
                         "username" : cur_user.username,
                         "pk" : cur_user.id,
-                        "code" : cur_user.userid_set.all()[0]
+                        "code" : cur_user.userid_set.all().first()
                     }
                 )
-                print(customer)
                 cur_user.customer_id = customer.id
                 customerId = customer.id
+                cur_user.save()
 
-            except:
+            except Exception as e:
+                print(e)
                 print('Error creating customer')
         else:
             customerId = cur_user.customer_id
-            print("Customer ")
 
-        print("Checking Out via Stripe. token:{} - {} - cust_id:{}".format(token, stripe_email, customerId))
+
+        # MembershipManager 
+        membership_manager = MembershipManager(cur_user.id, m_plan.id)
+
+        if not membership_manager.valid:
+            return render(request, 
+                    "home/payment_result.html",
+                    {
+                        "isSuccessful": False,
+                        "charge": None,
+                        "subscription": None
+                    }
+                )
         
 
-        
-        subtotal = m_plan.price
-        tax = 0.09
-        stripe_tax = 0.03
-        subscription = None
-        charge = None
+        print("Checking out via Stripe. token:{} - {} - cust_id:{}".format(token, stripe_email, customerId))
+        # move tax info to database        
+        subtotal, tax, stripe_tax = m_plan.price, 0.09, 0.03
+        subscription, charge = None, None
         isSuccessful = False
 
         if(m_plan.recurring):
-            #Make subscription
+            # Make subscription
             sub_errors = ['incomplete', 'incomplete_expired', 'past_due', 'canceled', 'unpaid']
-
             subscription = stripe.Subscription.create(
-                            customer=customerId,
-                            plan = m_plan.plan_id,
-                            tax_percent= tax+stripe_tax + 0.01,
-                            metadata={
-                                "username" : cur_user.username,
-                                "charge_type" : "Recurring Membership",
-                                "product_ids" : json.dumps( {"plan": str(m_plan.id) }),
-                                "product_info" : json.dumps({"name":m_plan.name, "desc":m_plan.desc, "price":m_plan.price})
-                            },
+                customer = customerId,
+                plan = m_plan.plan_id,
+                tax_percent = tax + stripe_tax + 0.01,
+                metadata = {
+                    "username": cur_user.username,
+                    "charge_type": "Recurring Membership",
+                    "product_ids": json.dumps({"plan": str(m_plan.id) }),
+                    "product_info": json.dumps({"name":m_plan.name, "desc":m_plan.desc, "price":m_plan.price})
+                },
             )
             cur_user.subscription_id = subscription.id
             isSuccessful = True if subscription.status not in sub_errors else False
@@ -229,7 +263,7 @@ class MembershipPayment(TemplateView):
                 cur_user.status = True
                 cur_user.membership_type = "subscription"
                 membership_manager.update_last_mem_id(subscription.id)
-                membership_manager.update_r_days(m_plan.duration)
+                membership_manager.update_remaining_days()
                 membership_manager.close()
                 cur_user.save()
         else:
@@ -237,33 +271,33 @@ class MembershipPayment(TemplateView):
             total = round((float(subtotal) * (1+stripe_tax) * (1+tax)) + 0.30, 2)*100
             # Make Charge
             charge = stripe.Charge.create(
-                        amount=int(total),
-                        currency='usd',
-                        description='Example charge',
-                        statement_descriptor= "Gym Membership",
-                        metadata={
-                            "username" : cur_user.username,
-                            "charge_type" : "Membership",
-                            "product_ids" : json.dumps({"plan": str(m_plan.id) }),
-                            "product_info" : json.dumps({"name":m_plan.name, "desc":m_plan.desc, "price":m_plan.price})
-                            },
-                        customer= customerId
+                amount = int(total),
+                currency = 'usd',
+                description = 'Example charge',
+                statement_descriptor = "Gym Membership",
+                metadata = {
+                    "username": cur_user.username,
+                    "charge_type": "Membership",
+                    "product_ids": json.dumps({"plan": str(m_plan.id)}),
+                    "product_info": json.dumps({"name": m_plan.name, "desc": m_plan.desc, "price": m_plan.price})
+                    },
+                customer = customerId
             )
-            
             if charge.paid: 
                 isSuccessful = True   
                 cur_user.status = True
                 cur_user.membership_type = "charge"
                 membership_manager.update_last_mem_id(charge.id)
-                membership_manager.update_r_days(m_plan.duration)
+                membership_manager.update_remaining_days()
                 membership_manager.close()
                 cur_user.save()
-                print("userpk: {} ".format(cur_user.id))
 
         return render(request, "home/payment_result.html", {"isSuccessful": isSuccessful,
                                                              "charge": charge,
                                                              "subscription":subscription})
-## Deprecated
+'''
+Since product payments are a soley a charge there are made with the API
+'''
 class ProductPaymentAnon(TemplateView):
     template_name = "home/product_payment_anon.html"
 
@@ -321,17 +355,12 @@ class ProductPaymentAnon(TemplateView):
 
 
         return render(request, self.template_name, context)
-
-# Upon Selection, display all selected items
-# Shows user qr code scanner to 
 class ProductPayment(TemplateView):
     template_name = "home/product_payment.html"
-    ## populates session from post request from gym prouct page
+    
     def get(self, request):
         return render(request, self.template_name)
-
-
-
+    # Deprecated, product payment is handled on front end
     def post(self, request):
         product_cart = json.loads(request.POST['products'])
         # Get ids for each product

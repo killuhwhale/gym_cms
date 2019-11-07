@@ -27,7 +27,7 @@ class ShowMembershipPackage extends React.Component{
     render(){
         let pkgs = this.state.packages;
         return(
-            <div className="row justify-content-center">
+            <div className="row justify-content-center fill-width">
                 {
                     pkgs.map( (el)=> {
                         return <MembershipPackage key = {el.id}
